@@ -4,434 +4,605 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cuenta de Cobro | te_amoblamos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --line: #111;
-      --muted: #4b5563;
-      --bg: #f3f4f6;
-      --panel: #fff;
+      --navy: #12253f;
+      --navy-2: #1b3558;
+      --light: #f6f9ff;
+      --line: #dbe6f5;
+      --text: #0f2340;
+      --muted: #7792b5;
+      --orange: #f4a62a;
+      --green: #00a63e;
+      --white: #ffffff;
+      --radius: 16px;
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: "Times New Roman", serif;
-      background: var(--bg);
-      color: #111;
+      font-family: Inter, system-ui, Arial, sans-serif;
+      background: #eef3fb;
+      color: var(--text);
     }
 
-    .page {
-      max-width: 1100px;
-      margin: 18px auto;
-      padding: 0 14px 24px;
+    .app {
+      max-width: 1320px;
+      margin: 20px auto;
+      padding: 0 16px 20px;
       display: grid;
       grid-template-columns: 360px 1fr;
       gap: 16px;
     }
 
-    .controls {
-      background: var(--panel);
-      border: 1px solid #ddd;
-      border-radius: 8px;
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
       padding: 14px;
       height: fit-content;
       position: sticky;
       top: 12px;
+      box-shadow: 0 10px 35px rgba(18, 37, 63, 0.08);
     }
 
-    .controls h2 { margin: 0 0 10px; font-family: Arial, sans-serif; }
-    .controls h3 { margin: 16px 0 8px; font-family: Arial, sans-serif; }
+    .panel h2 {
+      margin: 0 0 10px;
+      font-family: Montserrat, sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .section {
+      margin-top: 14px;
+      border-top: 1px solid #edf2fa;
+      padding-top: 12px;
+    }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #4a6489;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
     label {
       display: block;
       margin-bottom: 8px;
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      color: #333;
+      font-size: 12px;
+      font-weight: 700;
+      color: #486081;
     }
+
     input, textarea, button {
       width: 100%;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 9px;
+      margin-top: 4px;
+      padding: 10px;
+      border: 1px solid #d8e3f3;
+      border-radius: 10px;
       font: inherit;
-      font-family: Arial, sans-serif;
+      color: var(--text);
+      background: #fff;
     }
-    input[readonly] { background: #f8fafc; }
-    .row-2 {
+
+    input[readonly] {
+      background: #f8fbff;
+      font-weight: 700;
+    }
+
+    .row2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
+
     .btns {
       display: grid;
       gap: 8px;
       margin-top: 10px;
     }
+
     button {
-      cursor: pointer;
       border: 0;
-      background: #111827;
+      cursor: pointer;
+      font-weight: 800;
       color: #fff;
-      font-weight: 600;
+      background: var(--navy);
+      transition: .2s;
     }
-    button.secondary { background: #374151; }
-    button.danger { background: #b91c1c; }
+    button:hover { transform: translateY(-1px); }
+    .btn-orange { background: var(--orange); color: #102238; }
+    .btn-blue { background: #2b5ea8; }
+    .btn-danger { background: #c62828; }
 
-    .invoice-wrap {
-      background: var(--panel);
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 20px;
-      overflow: auto;
-    }
-
-    /* Factura estilo */
-    #invoice {
-      width: 100%;
-      min-height: 1200px;
+    .sheet-wrap {
       background: #fff;
-      padding: 6px 6px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 10px 35px rgba(18, 37, 63, 0.08);
+    }
+
+    .invoice {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #e6edf8;
+      padding: 18px;
+      min-height: 920px;
     }
 
     .top {
       display: grid;
       grid-template-columns: 1fr auto;
-      align-items: start;
       gap: 12px;
+      align-items: start;
     }
 
-    .title {
-      font-size: 46px;
-      letter-spacing: 1px;
-      font-weight: 800;
-      margin: 0 0 4px;
-    }
-
-    .seller-line {
+    .brand-line {
       display: flex;
-      gap: 10px;
-      margin: 6px 0;
-      font-size: 18px;
       align-items: center;
-    }
-
-    .dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: #111;
-      display: inline-block;
-      margin-right: 4px;
+      gap: 14px;
     }
 
     .logo-box {
-      width: 170px;
-      height: 110px;
-      border: 1px solid var(--line);
+      width: 92px;
+      height: 92px;
+      border-radius: 16px;
+      background: var(--navy);
+      color: var(--orange);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      text-align: center;
-      padding: 8px;
+      font-family: Montserrat, sans-serif;
+      font-size: 30px;
+      font-weight: 900;
     }
 
-    .date-box {
+    .brand-name {
+      font-family: Montserrat, sans-serif;
+      font-style: italic;
+      font-size: 54px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--navy);
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    .brand-sub {
+      margin: 4px 0 0;
+      color: var(--orange);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-family: Montserrat, sans-serif;
+    }
+
+    .seller-card {
+      margin-top: 14px;
+      border-left: 5px solid var(--orange);
+      padding: 6px 10px;
+      background: #fff;
+    }
+
+    .seller-name {
+      font-size: 30px;
+      font-weight: 900;
+      font-family: Montserrat, sans-serif;
+      margin: 0 0 4px;
+      color: var(--navy);
+    }
+
+    .seller-meta {
+      font-size: 24px;
+      color: #4f678b;
+      font-weight: 700;
+    }
+
+    .right-head {
+      text-align: right;
+      min-width: 280px;
+    }
+
+    .title-right {
+      margin: 0;
+      font-family: Montserrat, sans-serif;
+      font-style: italic;
+      font-size: 64px;
+      font-weight: 900;
+      color: var(--navy);
+      line-height: .95;
+    }
+
+    .number-right {
+      margin-top: 10px;
+      font-family: Montserrat, sans-serif;
+      font-size: 76px;
+      font-weight: 900;
+      color: var(--orange);
+      line-height: 1;
+    }
+
+    .date-pill {
       margin-top: 12px;
-      border: 1px solid var(--line);
-      display: inline-grid;
-      grid-template-columns: auto 42px 42px 42px;
+      background: #f4f8ff;
+      border: 1px solid #e2ebf8;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 800;
+      color: var(--navy);
+      font-size: 22px;
     }
 
-    .date-box div {
-      border-right: 1px solid var(--line);
-      padding: 10px 8px;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      font-weight: 700;
-      font-size: 14px;
+    .client-block {
+      margin-top: 18px;
+      border-bottom: 2px solid #edf3fd;
+      padding-bottom: 8px;
     }
-    .date-box div:last-child { border-right: 0; }
 
-    .client-row {
-      margin: 14px 0 10px;
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 14px;
-      align-items: end;
-      font-size: 34px;
-      font-weight: 700;
+    .client-label {
+      color: #8aa0bf;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-size: 20px;
+      font-style: italic;
+      margin: 0;
+      font-family: Montserrat, sans-serif;
     }
 
     .client-name {
-      border-bottom: 1px solid #111;
-      min-height: 42px;
-      display: flex;
-      align-items: center;
-      font-size: 38px;
-      font-weight: 700;
+      margin: 8px 0 0;
+      font-family: Montserrat, sans-serif;
+      font-size: 46px;
+      font-weight: 900;
+      color: var(--navy);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
-      table-layout: fixed;
+      margin-top: 14px;
     }
 
-    th, td {
-      border: 1px solid var(--line);
-      padding: 8px 6px;
-      text-align: center;
-      vertical-align: middle;
-      font-size: 28px;
-      line-height: 1.1;
+    thead th {
+      border: 2px solid #293e5a;
+      background: #f4f8ff;
+      color: #0f233f;
+      font-size: 20px;
+      font-family: Montserrat, sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 9px 6px;
     }
 
-    th {
-      font-weight: 800;
-      background: #fafafa;
-    }
-
-    td.desc {
-      text-align: left;
-      padding-left: 10px;
-    }
-
-    .totals-row {
-      margin-top: 8px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .total-letters {
-      border: 1px solid transparent;
-      padding: 8px 2px;
-      font-size: 34px;
+    tbody td {
+      border: 1px solid #d7e2f3;
+      padding: 10px 8px;
+      font-size: 24px;
       font-weight: 700;
+      color: #173252;
+      text-align: center;
     }
 
-    .total-box {
-      border: 1px solid #111;
+    td.desc { text-align: left; }
+
+    .bottom {
+      margin-top: 16px;
       display: grid;
-      grid-template-columns: auto auto;
-      font-size: 33px;
-      font-weight: 800;
+      grid-template-columns: 1fr 300px;
+      gap: 14px;
+      align-items: start;
     }
 
-    .total-box div {
-      border-right: 1px solid #111;
-      padding: 8px 12px;
+    .left-bottom {
+      display: grid;
+      gap: 12px;
     }
 
-    .total-box div:last-child { border-right: 0; }
-
-    .pay-info {
-      margin-top: 34px;
-      font-size: 34px;
-      font-weight: 800;
+    .total-words {
+      border-top: 2px dashed #dce7f8;
+      border-bottom: 2px dashed #dce7f8;
+      padding: 10px 0;
+      font-family: Montserrat, sans-serif;
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--navy);
     }
 
-    .pay-grid {
-      margin-top: 10px;
+    .bank-card {
+      border: 2px solid #e0ebfb;
+      border-radius: 16px;
+      padding: 12px;
+      background: #fbfdff;
+    }
+
+    .bank-title {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-family: Montserrat, sans-serif;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-style: italic;
+    }
+
+    .bank-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px 26px;
-      font-size: 30px;
+      gap: 10px 18px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #58729a;
+    }
+
+    .bank-grid strong {
+      display: block;
+      color: #0f233f;
+      font-size: 36px;
+      margin-top: 2px;
+      font-family: Montserrat, sans-serif;
+      font-weight: 900;
+    }
+
+    .obs {
+      margin-top: 8px;
+      border-top: 2px dashed #dce7f8;
+      padding-top: 8px;
+      font-size: 20px;
+      color: #5f789c;
       font-weight: 700;
+      font-style: italic;
     }
 
-    .line-field {
-      border-bottom: 1px solid #111;
-      min-height: 42px;
+    .summary {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sum-row {
       display: flex;
-      align-items: center;
-      padding-right: 6px;
       justify-content: space-between;
+      align-items: center;
+      padding: 6px 2px;
+      font-size: 34px;
+      font-weight: 900;
+      font-family: Montserrat, sans-serif;
     }
 
-    .line-field small {
-      font-size: 23px;
-      font-weight: 600;
-      color: var(--muted);
-      margin-right: 8px;
-      font-family: Arial, sans-serif;
+    .sum-row small {
+      color: #7e97b8;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-style: italic;
     }
 
-    .small-note {
-      margin-top: 14px;
-      font-size: 14px;
-      font-family: Arial, sans-serif;
-      color: #4b5563;
+    .sum-row.green { color: var(--green); }
+
+    .saldo {
+      margin-top: 6px;
+      background: var(--navy);
+      color: #fff;
+      border-radius: 18px;
+      padding: 10px 14px;
+      border-bottom: 4px solid var(--orange);
     }
 
-    @media (max-width: 1000px) {
-      .page { grid-template-columns: 1fr; }
-      .controls { position: static; }
-      .title { font-size: 30px; }
-      .client-row, .client-name, th, td, .pay-info, .pay-grid, .total-letters, .total-box { font-size: 18px; }
+    .saldo-title {
+      font-size: 20px;
+      color: var(--orange);
+      font-family: Montserrat, sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .saldo-value {
+      font-size: 62px;
+      font-family: Montserrat, sans-serif;
+      font-weight: 900;
+      margin: 4px 0 0;
+      text-align: right;
+      line-height: 1;
+    }
+
+    @media (max-width: 1200px) {
+      .app { grid-template-columns: 1fr; }
+      .panel { position: static; }
+      .brand-name { font-size: 38px; }
+      .title-right { font-size: 44px; }
+      .number-right { font-size: 54px; }
+      .client-name { font-size: 32px; }
+      tbody td, thead th { font-size: 16px; }
+      .bottom { grid-template-columns: 1fr; }
+      .sum-row { font-size: 24px; }
+      .sum-row small { font-size: 20px; }
+      .saldo-value { font-size: 42px; }
+      .bank-grid strong { font-size: 22px; }
     }
 
     @media print {
       body { background: #fff; }
-      .page { display: block; margin: 0; padding: 0; max-width: none; }
-      .controls { display: none !important; }
-      .invoice-wrap {
-        border: 0;
-        border-radius: 0;
-        padding: 0;
-      }
-      #invoice {
-        padding: 0;
-      }
+      .app { display: block; max-width: none; margin: 0; padding: 0; }
+      .panel { display: none !important; }
+      .sheet-wrap { border: 0; box-shadow: none; padding: 0; border-radius: 0; }
+      .invoice { border: 0; border-radius: 0; padding: 10px; }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <!-- Panel de edición -->
-    <section class="controls">
-      <h2>Editor de factura</h2>
+  <main class="app">
+    <!-- PANEL DE CONTROL -->
+    <section class="panel">
+      <h2>Editor de cuenta de cobro</h2>
 
-      <h3>Datos fijos vendedor</h3>
-      <label>Nombre
-        <input id="sellerName" value="JHON TEILOR OSORIO ALVAREZ" readonly />
-      </label>
-      <label>Email
-        <input id="sellerEmail" value="Teilorosorio@gmail.com" readonly />
-      </label>
-      <label>Teléfono
-        <input id="sellerPhone" value="311-546-2451" readonly />
-      </label>
-      <label>Documento
-        <input id="sellerDoc" value="1315145210" readonly />
-      </label>
-
-      <h3>Datos factura</h3>
-      <div class="row-2">
-        <label>Fecha
-          <input id="invoiceDate" type="date" />
+      <div class="section">
+        <p class="section-title">Vendedor (fijo)</p>
+        <label>Nombre
+          <input id="sellerName" value="JHON TEILOR OSORIO ALVAREZ" readonly />
         </label>
-        <label>Número
-          <input id="invoiceNumber" placeholder="CC-0001" />
+        <label>Email
+          <input id="sellerEmail" value="Teilorosorio@gmail.com" readonly />
+        </label>
+        <label>Teléfono
+          <input id="sellerPhone" value="3115462451" readonly />
         </label>
       </div>
-      <label>Cliente (SEÑOR(ES))
-        <input id="clientName" placeholder="Nombre del cliente" />
-      </label>
 
-      <h3>Agregar item</h3>
-      <label>Descripción
-        <input id="itemDesc" placeholder="Ej: Camas de 1 metro" />
-      </label>
-      <div class="row-2">
-        <label>Cantidad
-          <input id="itemQty" type="number" min="1" value="1" />
-        </label>
-        <label>Valor unidad
-          <input id="itemUnit" type="number" min="0" step="1" placeholder="0" />
+      <div class="section">
+        <p class="section-title">Datos factura</p>
+        <div class="row2">
+          <label>Fecha
+            <input id="invoiceDate" type="date" />
+          </label>
+          <label>Número
+            <input id="invoiceNumber" value="001" />
+          </label>
+        </div>
+        <label>Cliente
+          <input id="clientName" placeholder="Nombre del cliente" />
         </label>
       </div>
-      <button id="addItem">Agregar a tabla</button>
 
-      <h3>Información de pago</h3>
-      <label>Número de cuenta
-        <input id="payAccount" placeholder="Ej: 0123456789" />
-      </label>
-      <label>Cédula
-        <input id="payCedula" placeholder="Ej: 1315145210" />
-      </label>
-      <label>Banco
-        <input id="payBank" placeholder="Ej: Bancolombia" />
-      </label>
-      <label>Notas
-        <textarea id="notes" rows="3" placeholder="Observaciones..."></textarea>
-      </label>
+      <div class="section">
+        <p class="section-title">Agregar ítem</p>
+        <label>Descripción
+          <input id="itemDesc" placeholder="Ej: Fabricar cama de 1 metro" />
+        </label>
+        <div class="row2">
+          <label>Cantidad
+            <input id="itemQty" type="number" min="1" value="1" />
+          </label>
+          <label>Valor unidad
+            <input id="itemUnit" type="number" min="0" step="1" placeholder="0" />
+          </label>
+        </div>
+        <button id="addItem" class="btn-blue">Agregar ítem</button>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Información bancaria (fija)</p>
+        <label>Banco
+          <input id="payBank" value="CAJA SOCIAL (AHORROS)" readonly />
+        </label>
+        <div class="row2">
+          <label>Número de cuenta
+            <input id="payAccount" value="24055109150" readonly />
+          </label>
+          <label>Cédula titular
+            <input id="payCedula" value="103757035" readonly />
+          </label>
+        </div>
+        <label>Observaciones
+          <textarea id="notes" rows="3" placeholder="Ej: Gracias por su compra"></textarea>
+        </label>
+      </div>
 
       <div class="btns">
-        <button id="saveLocal">Guardar factura</button>
-        <button id="newInvoice" class="secondary">Nueva factura</button>
-        <button id="exportPdf" class="secondary">Descargar PDF (solo factura)</button>
-        <button id="clearItems" class="danger">Vaciar items</button>
+        <button id="saveLocal">Guardar</button>
+        <button id="newInvoice">Nueva factura</button>
+        <button id="exportPdf" class="btn-orange">Descargar PDF (solo factura)</button>
+        <button id="clearItems" class="btn-danger">Vaciar ítems</button>
       </div>
-
-      <p class="small-note">
-        Tip: esta versión imprime solo el documento de la derecha.
-      </p>
     </section>
 
-    <!-- Documento -->
-    <section class="invoice-wrap">
-      <article id="invoice">
+    <!-- FACTURA -->
+    <section class="sheet-wrap">
+      <article id="invoice" class="invoice">
         <div class="top">
           <div>
-            <h1 class="title">CUENTA DE COBRO</h1>
-            <div class="seller-line"><span class="dot"></span><span id="vDoc">1315145210</span></div>
-            <div class="seller-line"><span class="dot"></span><span id="vName">JHON TEILOR OSORIO ALVAREZ</span></div>
-            <div class="seller-line"><span class="dot"></span><span id="vEmail">Teilorosorio@gmail.com</span></div>
-            <div class="seller-line"><span class="dot"></span><span id="vPhone">311-546-2451</span></div>
+            <div class="brand-line">
+              <div class="logo-box">T/A</div>
+              <div>
+                <h1 class="brand-name">TE AMOBLAMOS</h1>
+                <p class="brand-sub">MOBILIARIO & ESTYLO</p>
+              </div>
+            </div>
+
+            <div class="seller-card">
+              <p class="seller-name" id="vSeller">JHON TEILOR OSORIO ALVAREZ</p>
+              <p class="seller-meta"><span id="vEmail">Teilorosorio@gmail.com</span> | <span id="vPhone">3115462451</span></p>
+            </div>
           </div>
-          <div>
-            <div class="logo-box">
-              LOGO te_amoblamos
-              <br />
-              (puedes reemplazar por imagen)
-            </div>
-            <div class="date-box">
-              <div>FECHA</div>
-              <div id="dd">--</div>
-              <div id="mm">--</div>
-              <div id="yy">--</div>
-            </div>
+
+          <div class="right-head">
+            <h2 class="title-right">CUENTA DE<br>COBRO</h2>
+            <div class="number-right">#<span id="vNumber">001</span></div>
+            <div class="date-pill">FECHA: <span id="vDate">----</span></div>
           </div>
         </div>
 
-        <div class="client-row">
-          <div>SEÑOR(ES)</div>
-          <div class="client-name" id="clientDisplay">-</div>
+        <div class="client-block">
+          <p class="client-label">CLIENTE:</p>
+          <p class="client-name" id="vClient">---</p>
         </div>
 
         <table>
           <thead>
             <tr>
-              <th style="width: 13%;">Cantidad</th>
-              <th style="width: 42%;">Descripción</th>
-              <th style="width: 22%;">VALOR UNIDAD</th>
-              <th style="width: 23%;">TOTAL</th>
+              <th style="width:12%">CANT.</th>
+              <th style="width:38%">DESCRIPCIÓN DETALLADA</th>
+              <th style="width:25%">VALOR UNIDAD</th>
+              <th style="width:25%">TOTAL</th>
             </tr>
           </thead>
           <tbody id="itemsBody"></tbody>
         </table>
 
-        <div class="totals-row">
-          <div class="total-letters">
-            TOTAL: <span id="totalWords">cero pesos</span>
+        <div class="bottom">
+          <div class="left-bottom">
+            <div class="total-words">TOTAL EN LETRAS: <span id="totalWords">---</span></div>
+
+            <div class="bank-card">
+              <h3 class="bank-title">Información bancaria</h3>
+              <div class="bank-grid">
+                <div>
+                  CAJA SOCIAL<br>(AHORROS):
+                  <strong id="vBankAccount">24055109150</strong>
+                </div>
+                <div>
+                  CÉDULA TITULAR:
+                  <strong id="vBankCedula">103757035</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="obs">OBSERVACIONES: <span id="vNotes">-</span></div>
           </div>
-          <div class="total-box">
-            <div>TOTAL</div>
-            <div id="totalNumber">0</div>
+
+          <div class="summary">
+            <div class="sum-row">
+              <small>SUBTOTAL</small>
+              <span>$<span id="subTotal">0</span></span>
+            </div>
+            <div class="sum-row green">
+              <small>ABONO</small>
+              <span>$<span id="abono">0</span></span>
+            </div>
+            <div class="saldo">
+              <p class="saldo-title">SALDO RESTANTE</p>
+              <p class="saldo-value">$<span id="saldo">0</span></p>
+            </div>
           </div>
         </div>
-
-        <div class="pay-info">INFORMACION DE PAGO</div>
-        <div class="pay-grid">
-          <div class="line-field"><small>NUMERO DE CUENTA:</small><span id="payAccountView">-</span></div>
-          <div class="line-field"><small>CEDULA:</small><span id="payCedulaView">-</span></div>
-          <div class="line-field"><small>BANCO:</small><span id="payBankView">-</span></div>
-          <div class="line-field"><small>FACTURA:</small><span id="invoiceNumberView">-</span></div>
-        </div>
-
-        <p class="small-note" id="notesView"></p>
       </article>
     </section>
-  </div>
+  </main>
 
   <script>
-    const STORAGE_KEY = "te_amoblamos_facturas_pro_v1";
+    const STORAGE_KEY = "te_amoblamos_style_premium_v1";
     const items = [];
 
     const $ = (id) => document.getElementById(id);
@@ -440,39 +611,36 @@
       sellerName: $("sellerName"),
       sellerEmail: $("sellerEmail"),
       sellerPhone: $("sellerPhone"),
-      sellerDoc: $("sellerDoc"),
       invoiceDate: $("invoiceDate"),
       invoiceNumber: $("invoiceNumber"),
       clientName: $("clientName"),
       itemDesc: $("itemDesc"),
       itemQty: $("itemQty"),
       itemUnit: $("itemUnit"),
+      payBank: $("payBank"),
       payAccount: $("payAccount"),
       payCedula: $("payCedula"),
-      payBank: $("payBank"),
       notes: $("notes"),
-      itemsBody: $("itemsBody"),
-      totalNumber: $("totalNumber"),
-      totalWords: $("totalWords"),
+      addItem: $("addItem"),
       saveLocal: $("saveLocal"),
       newInvoice: $("newInvoice"),
       exportPdf: $("exportPdf"),
-      addItem: $("addItem"),
       clearItems: $("clearItems"),
+      itemsBody: $("itemsBody"),
       // vista
-      vName: $("vName"),
+      vSeller: $("vSeller"),
       vEmail: $("vEmail"),
       vPhone: $("vPhone"),
-      vDoc: $("vDoc"),
-      dd: $("dd"),
-      mm: $("mm"),
-      yy: $("yy"),
-      clientDisplay: $("clientDisplay"),
-      payAccountView: $("payAccountView"),
-      payCedulaView: $("payCedulaView"),
-      payBankView: $("payBankView"),
-      invoiceNumberView: $("invoiceNumberView"),
-      notesView: $("notesView"),
+      vNumber: $("vNumber"),
+      vDate: $("vDate"),
+      vClient: $("vClient"),
+      totalWords: $("totalWords"),
+      vBankAccount: $("vBankAccount"),
+      vBankCedula: $("vBankCedula"),
+      vNotes: $("vNotes"),
+      subTotal: $("subTotal"),
+      abono: $("abono"),
+      saldo: $("saldo"),
       invoice: $("invoice")
     };
 
@@ -480,7 +648,6 @@
       return new Intl.NumberFormat("es-CO").format(Math.round(Number(n) || 0));
     }
 
-    // conversor simple (0..999,999,999)
     function toWordsES(num) {
       num = Math.floor(Number(num) || 0);
       if (num === 0) return "cero pesos";
@@ -523,30 +690,15 @@
       return text.trim() + " pesos";
     }
 
-    function total() {
+    function subtotal() {
       return items.reduce((acc, it) => acc + (it.qty * it.unit), 0);
-    }
-
-    function renderDateBoxes() {
-      const date = dom.invoiceDate.value;
-      if (!date) {
-        dom.dd.textContent = "--";
-        dom.mm.textContent = "--";
-        dom.yy.textContent = "--";
-        return;
-      }
-      const [y, m, d] = date.split("-");
-      dom.dd.textContent = d;
-      dom.mm.textContent = m;
-      dom.yy.textContent = y.slice(-2);
     }
 
     function renderItems() {
       dom.itemsBody.innerHTML = "";
-
       if (!items.length) {
         const tr = document.createElement("tr");
-        tr.innerHTML = "<td>-</td><td class='desc'>Sin items</td><td>-</td><td>-</td>";
+        tr.innerHTML = "<td>-</td><td class='desc'>Sin productos</td><td>-</td><td>-</td>";
         dom.itemsBody.appendChild(tr);
       } else {
         items.forEach((it, idx) => {
@@ -566,70 +718,26 @@
         });
       }
 
-      const t = total();
-      dom.totalNumber.textContent = money(t);
-      dom.totalWords.textContent = toWordsES(t);
+      const sub = subtotal();
+      const abono = 0;
+      const saldo = sub - abono;
+
+      dom.subTotal.textContent = money(sub);
+      dom.abono.textContent = money(abono);
+      dom.saldo.textContent = money(saldo);
+      dom.totalWords.textContent = toWordsES(saldo);
     }
 
     function renderHeader() {
-      dom.vName.textContent = dom.sellerName.value;
+      dom.vSeller.textContent = dom.sellerName.value;
       dom.vEmail.textContent = dom.sellerEmail.value;
       dom.vPhone.textContent = dom.sellerPhone.value;
-      dom.vDoc.textContent = dom.sellerDoc.value;
-      dom.clientDisplay.textContent = dom.clientName.value || "-";
-      dom.payAccountView.textContent = dom.payAccount.value || "-";
-      dom.payCedulaView.textContent = dom.payCedula.value || "-";
-      dom.payBankView.textContent = dom.payBank.value || "-";
-      dom.invoiceNumberView.textContent = dom.invoiceNumber.value || "-";
-      dom.notesView.textContent = dom.notes.value ? "Notas: " + dom.notes.value : "";
-      renderDateBoxes();
-    }
-
-    function buildInvoice() {
-      return {
-        seller: {
-          name: dom.sellerName.value,
-          email: dom.sellerEmail.value,
-          phone: dom.sellerPhone.value,
-          doc: dom.sellerDoc.value
-        },
-        invoiceDate: dom.invoiceDate.value,
-        invoiceNumber: dom.invoiceNumber.value,
-        clientName: dom.clientName.value,
-        payAccount: dom.payAccount.value,
-        payCedula: dom.payCedula.value,
-        payBank: dom.payBank.value,
-        notes: dom.notes.value,
-        items: items.slice(),
-        total: total()
-      };
-    }
-
-    function saveLocal() {
-      const data = buildInvoice();
-      if (!data.clientName) return alert("Escribe el nombre del cliente.");
-      if (!data.items.length) return alert("Agrega al menos un item.");
-      const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      const idx = all.findIndex(x => x.invoiceNumber === data.invoiceNumber && data.invoiceNumber);
-      if (idx >= 0) all[idx] = data; else all.push(data);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-      alert("Factura guardada localmente.");
-    }
-
-    function resetForm() {
-      const today = new Date().toISOString().slice(0, 10);
-      dom.invoiceDate.value = today;
-      dom.invoiceNumber.value = "CC-" + Date.now().toString().slice(-4);
-      dom.clientName.value = "";
-      dom.itemDesc.value = "";
-      dom.itemQty.value = 1;
-      dom.itemUnit.value = "";
-      dom.payAccount.value = "";
-      dom.payCedula.value = dom.sellerDoc.value;
-      dom.payBank.value = "";
-      dom.notes.value = "";
-      items.length = 0;
-      renderAll();
+      dom.vNumber.textContent = dom.invoiceNumber.value || "001";
+      dom.vDate.textContent = dom.invoiceDate.value || "----";
+      dom.vClient.textContent = dom.clientName.value || "---";
+      dom.vBankAccount.textContent = "24055109150";
+      dom.vBankCedula.textContent = "103757035";
+      dom.vNotes.textContent = dom.notes.value || "-";
     }
 
     function renderAll() {
@@ -637,14 +745,48 @@
       renderItems();
     }
 
+    function resetForm() {
+      const today = new Date().toISOString().slice(0, 10);
+      dom.invoiceDate.value = today;
+      dom.invoiceNumber.value = "001";
+      dom.clientName.value = "";
+      dom.itemDesc.value = "";
+      dom.itemQty.value = 1;
+      dom.itemUnit.value = "";
+      dom.payBank.value = "CAJA SOCIAL (AHORROS)";
+      dom.payAccount.value = "24055109150";
+      dom.payCedula.value = "103757035";
+      dom.notes.value = "";
+      items.length = 0;
+      renderAll();
+    }
+
+    function saveLocal() {
+      if (!dom.clientName.value.trim()) return alert("Ingresa el nombre del cliente.");
+      if (!items.length) return alert("Agrega al menos un ítem.");
+      const data = {
+        invoiceDate: dom.invoiceDate.value,
+        invoiceNumber: dom.invoiceNumber.value,
+        clientName: dom.clientName.value,
+        notes: dom.notes.value,
+        items: items.slice(),
+        total: subtotal()
+      };
+      const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const idx = all.findIndex(x => x.invoiceNumber === data.invoiceNumber && data.invoiceNumber);
+      if (idx >= 0) all[idx] = data; else all.push(data);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+      alert("Factura guardada.");
+    }
+
     dom.addItem.addEventListener("click", () => {
       const desc = dom.itemDesc.value.trim();
       const qty = Number(dom.itemQty.value);
       const unit = Number(dom.itemUnit.value);
 
-      if (!desc) return alert("Escribe una descripcion.");
-      if (!(qty > 0)) return alert("Cantidad invalida.");
-      if (!(unit >= 0)) return alert("Valor unidad invalido.");
+      if (!desc) return alert("Escribe la descripción.");
+      if (!(qty > 0)) return alert("Cantidad inválida.");
+      if (!(unit >= 0)) return alert("Valor unidad inválido.");
 
       items.push({ desc, qty, unit });
       dom.itemDesc.value = "";
@@ -654,7 +796,7 @@
     });
 
     dom.clearItems.addEventListener("click", () => {
-      if (!confirm("¿Vaciar todos los items?")) return;
+      if (!confirm("¿Vaciar todos los ítems?")) return;
       items.length = 0;
       renderAll();
     });
@@ -662,42 +804,26 @@
     dom.saveLocal.addEventListener("click", saveLocal);
     dom.newInvoice.addEventListener("click", resetForm);
 
-    // Descarga PDF solo de la factura (no panel izquierdo)
+    ["invoiceDate", "invoiceNumber", "clientName", "notes"].forEach((id) => {
+      $(id).addEventListener("input", renderHeader);
+    });
+
+    // Exportar solo factura
     dom.exportPdf.addEventListener("click", () => {
       const html = dom.invoice.outerHTML;
-      const w = window.open("", "_blank", "width=1200,height=900");
+      const w = window.open("", "_blank", "width=1300,height=900");
       w.document.write(`
         <!doctype html>
         <html lang="es">
         <head>
           <meta charset="UTF-8" />
-          <title>Factura</title>
+          <title>Factura PDF</title>
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
           <style>
-            body { margin: 0; font-family: "Times New Roman", serif; }
-            #invoice { padding: 24px; }
-            table { width:100%; border-collapse: collapse; margin-top:10px; table-layout:fixed; }
-            th, td { border:1px solid #111; padding:8px 6px; text-align:center; vertical-align:middle; font-size:28px; line-height:1.1; }
-            td.desc { text-align:left; padding-left:10px; }
-            .title { font-size:46px; font-weight:800; margin:0 0 4px; }
-            .top { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:start; }
-            .logo-box { width:170px; height:110px; border:1px solid #111; display:flex; align-items:center; justify-content:center; font-family:Arial,sans-serif; font-size:14px; text-align:center; padding:8px; }
-            .date-box { margin-top:12px; border:1px solid #111; display:inline-grid; grid-template-columns:auto 42px 42px 42px; }
-            .date-box div { border-right:1px solid #111; padding:10px 8px; text-align:center; font-family:Arial,sans-serif; font-weight:700; font-size:14px; }
-            .date-box div:last-child { border-right:0; }
-            .seller-line { display:flex; gap:10px; margin:6px 0; font-size:18px; align-items:center; }
-            .dot { width:9px; height:9px; border-radius:999px; background:#111; display:inline-block; margin-right:4px; }
-            .client-row { margin:14px 0 10px; display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:end; font-size:34px; font-weight:700; }
-            .client-name { border-bottom:1px solid #111; min-height:42px; display:flex; align-items:center; font-size:38px; font-weight:700; }
-            .totals-row { margin-top:8px; display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; }
-            .total-letters { padding:8px 2px; font-size:34px; font-weight:700; }
-            .total-box { border:1px solid #111; display:grid; grid-template-columns:auto auto; font-size:33px; font-weight:800; }
-            .total-box div { border-right:1px solid #111; padding:8px 12px; }
-            .total-box div:last-child { border-right:0; }
-            .pay-info { margin-top:34px; font-size:34px; font-weight:800; }
-            .pay-grid { margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:10px 26px; font-size:30px; font-weight:700; }
-            .line-field { border-bottom:1px solid #111; min-height:42px; display:flex; align-items:center; padding-right:6px; justify-content:space-between; }
-            .line-field small { font-size:23px; font-weight:600; color:#4b5563; margin-right:8px; font-family:Arial,sans-serif; }
-            .small-note { margin-top:14px; font-size:14px; font-family:Arial,sans-serif; color:#4b5563; }
+            body { margin: 0; font-family: Inter, Arial, sans-serif; color: #0f2340; }
+            .invoice { padding: 10px; }
           </style>
         </head>
         <body>
@@ -713,11 +839,6 @@
       `);
       w.document.close();
     });
-
-    [
-      "invoiceDate", "invoiceNumber", "clientName",
-      "payAccount", "payCedula", "payBank", "notes"
-    ].forEach((id) => $(id).addEventListener("input", renderHeader));
 
     resetForm();
   </script>
