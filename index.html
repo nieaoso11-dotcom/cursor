@@ -1,16 +1,520 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Te_amoblamos - Facturador</title>
-    <meta http-equiv="refresh" content="0; url=./facturador-google-sites.html" />
-  </head>
-  <body>
-    <p>Redirigiendo al facturador...</p>
-    <p>
-      Si no redirige automaticamente, abre
-      <a href="./facturador-google-sites.html">esta pagina</a>.
-    </p>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Facturación | Emprendimiento</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --danger: #b91c1c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .app-header { padding: 24px 20px 8px; }
+    .app-header h1 { margin: 0 0 8px; }
+    .app-header p { margin: 0; color: var(--muted); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      padding: 16px 20px 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    h2, h3 { margin-top: 0; }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.item-entry { grid-template-columns: 2fr 1fr 1fr auto; }
+
+    label {
+      display: block;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    input, textarea, button {
+      width: 100%;
+      margin-top: 6px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+    }
+
+    button.secondary { background: #111827; }
+
+    button.delete {
+      background: var(--danger);
+      width: auto;
+      padding: 6px 10px;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .totals {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 10px;
+      align-items: end;
+      margin: 14px 0;
+    }
+
+    .totals p { margin: 0; }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preview {
+      min-height: 180px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      background: #fcfdff;
+    }
+
+    .history-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .history-list li {
+      border-bottom: 1px solid var(--line);
+      padding: 8px 0;
+    }
+
+    .history-list button { margin-top: 6px; }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .grid.two, .grid.item-entry, .totals { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      .app-header, .actions, .history-list, #historyList, #newInvoiceBtn, #saveInvoiceBtn, #printInvoiceBtn, #addItemBtn {
+        display: none !important;
+      }
+
+      body { background: #fff; }
+      .layout { grid-template-columns: 1fr; padding: 0; }
+      .panel { border: none; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <h1>Facturación para Emprendimiento</h1>
+    <p>Crea, calcula y guarda tus facturas rápidamente.</p>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <h2>Datos generales</h2>
+      <div class="grid two">
+        <label>Número factura
+          <input id="invoiceNumber" type="text" placeholder="FAC-0001" />
+        </label>
+        <label>Fecha
+          <input id="invoiceDate" type="date" />
+        </label>
+      </div>
+
+      <h3>Tu negocio</h3>
+      <div class="grid two">
+        <label>Nombre negocio
+          <input id="businessName" type="text" placeholder="Mi Emprendimiento" />
+        </label>
+        <label>NIT / ID
+          <input id="businessTaxId" type="text" placeholder="123456789" />
+        </label>
+      </div>
+
+      <h3>Cliente</h3>
+      <div class="grid two">
+        <label>Nombre cliente
+          <input id="clientName" type="text" placeholder="Nombre completo" />
+        </label>
+        <label>Documento / NIT
+          <input id="clientTaxId" type="text" placeholder="987654321" />
+        </label>
+      </div>
+
+      <div class="grid two">
+        <label>Email
+          <input id="clientEmail" type="email" placeholder="cliente@correo.com" />
+        </label>
+        <label>Teléfono
+          <input id="clientPhone" type="text" placeholder="+57 000 000 0000" />
+        </label>
+      </div>
+
+      <h2>Items</h2>
+      <div class="grid item-entry">
+        <input id="itemDescription" type="text" placeholder="Descripción del producto o servicio" />
+        <input id="itemQty" type="number" min="1" value="1" placeholder="Cantidad" />
+        <input id="itemPrice" type="number" min="0" step="0.01" placeholder="Precio unitario" />
+        <button id="addItemBtn" type="button">Agregar item</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="itemsTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="totals">
+        <label>IVA (%)
+          <input id="taxRate" type="number" min="0" step="0.01" value="19" />
+        </label>
+        <p>Subtotal: <strong id="subtotalValue">$0.00</strong></p>
+        <p>IVA: <strong id="taxValue">$0.00</strong></p>
+        <p>Total: <strong id="totalValue">$0.00</strong></p>
+      </div>
+
+      <label>Notas
+        <textarea id="notes" rows="3" placeholder="Gracias por tu compra."></textarea>
+      </label>
+
+      <div class="actions">
+        <button id="saveInvoiceBtn" type="button">Guardar factura</button>
+        <button id="newInvoiceBtn" type="button" class="secondary">Nueva factura</button>
+        <button id="printInvoiceBtn" type="button" class="secondary">Imprimir / PDF</button>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <h2>Vista previa</h2>
+      <article id="preview" class="preview"></article>
+
+      <h2>Historial (local)</h2>
+      <ul id="historyList" class="history-list"></ul>
+    </aside>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "facturas_emprendimiento_v1";
+    const items = [];
+
+    const dom = {
+      invoiceNumber: document.getElementById("invoiceNumber"),
+      invoiceDate: document.getElementById("invoiceDate"),
+      businessName: document.getElementById("businessName"),
+      businessTaxId: document.getElementById("businessTaxId"),
+      clientName: document.getElementById("clientName"),
+      clientTaxId: document.getElementById("clientTaxId"),
+      clientEmail: document.getElementById("clientEmail"),
+      clientPhone: document.getElementById("clientPhone"),
+      itemDescription: document.getElementById("itemDescription"),
+      itemQty: document.getElementById("itemQty"),
+      itemPrice: document.getElementById("itemPrice"),
+      taxRate: document.getElementById("taxRate"),
+      notes: document.getElementById("notes"),
+      itemsTableBody: document.getElementById("itemsTableBody"),
+      subtotalValue: document.getElementById("subtotalValue"),
+      taxValue: document.getElementById("taxValue"),
+      totalValue: document.getElementById("totalValue"),
+      preview: document.getElementById("preview"),
+      historyList: document.getElementById("historyList"),
+      addItemBtn: document.getElementById("addItemBtn"),
+      saveInvoiceBtn: document.getElementById("saveInvoiceBtn"),
+      newInvoiceBtn: document.getElementById("newInvoiceBtn"),
+      printInvoiceBtn: document.getElementById("printInvoiceBtn")
+    };
+
+    function currency(value) {
+      return new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 2
+      }).format(value || 0);
+    }
+
+    function getSubTotal() {
+      return items.reduce((acc, item) => acc + item.qty * item.price, 0);
+    }
+
+    function getTax() {
+      const taxRate = Number(dom.taxRate.value) || 0;
+      return getSubTotal() * (taxRate / 100);
+    }
+
+    function getTotal() {
+      return getSubTotal() + getTax();
+    }
+
+    function renderItems() {
+      dom.itemsTableBody.innerHTML = "";
+
+      if (items.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = "<td colspan='5'>Aún no hay items.</td>";
+        dom.itemsTableBody.appendChild(row);
+      } else {
+        items.forEach((item, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${item.description}</td>
+            <td>${item.qty}</td>
+            <td>${currency(item.price)}</td>
+            <td>${currency(item.qty * item.price)}</td>
+            <td><button class="delete" data-index="${index}" type="button">Eliminar</button></td>
+          `;
+          dom.itemsTableBody.appendChild(row);
+        });
+      }
+
+      dom.subtotalValue.textContent = currency(getSubTotal());
+      dom.taxValue.textContent = currency(getTax());
+      dom.totalValue.textContent = currency(getTotal());
+    }
+
+    function buildInvoiceObject() {
+      return {
+        id: dom.invoiceNumber.value.trim() || `FAC-${Date.now()}`,
+        date: dom.invoiceDate.value,
+        business: {
+          name: dom.businessName.value.trim(),
+          taxId: dom.businessTaxId.value.trim()
+        },
+        client: {
+          name: dom.clientName.value.trim(),
+          taxId: dom.clientTaxId.value.trim(),
+          email: dom.clientEmail.value.trim(),
+          phone: dom.clientPhone.value.trim()
+        },
+        items: items.map((item) => ({ ...item })),
+        taxRate: Number(dom.taxRate.value) || 0,
+        notes: dom.notes.value.trim(),
+        subtotal: getSubTotal(),
+        tax: getTax(),
+        total: getTotal()
+      };
+    }
+
+    function renderPreview() {
+      const data = buildInvoiceObject();
+      const rows = data.items
+        .map((item) => `<li>${item.description} | ${item.qty} x ${currency(item.price)} = ${currency(item.qty * item.price)}</li>`)
+        .join("");
+
+      dom.preview.innerHTML = `
+        <h3>Factura ${data.id}</h3>
+        <p><strong>Fecha:</strong> ${data.date || "-"}</p>
+        <p><strong>Negocio:</strong> ${data.business.name || "-"} ${data.business.taxId ? `(${data.business.taxId})` : ""}</p>
+        <p><strong>Cliente:</strong> ${data.client.name || "-"} ${data.client.taxId ? `(${data.client.taxId})` : ""}</p>
+        <ul>${rows || "<li>Sin items</li>"}</ul>
+        <p><strong>Subtotal:</strong> ${currency(data.subtotal)}</p>
+        <p><strong>IVA (${data.taxRate}%):</strong> ${currency(data.tax)}</p>
+        <p><strong>Total:</strong> ${currency(data.total)}</p>
+        <p><strong>Notas:</strong> ${data.notes || "-"}</p>
+      `;
+    }
+
+    function loadHistory() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    }
+
+    function saveHistory(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function renderHistory() {
+      const history = loadHistory();
+      dom.historyList.innerHTML = "";
+
+      if (history.length === 0) {
+        dom.historyList.innerHTML = "<li>No hay facturas guardadas aún.</li>";
+        return;
+      }
+
+      history.slice().reverse().forEach((invoice) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${invoice.id}</strong> - ${invoice.client.name || "Cliente"}<br>
+          ${invoice.date || "Sin fecha"} | ${currency(invoice.total)}
+        `;
+
+        const loadBtn = document.createElement("button");
+        loadBtn.type = "button";
+        loadBtn.textContent = "Cargar";
+        loadBtn.addEventListener("click", () => loadInvoice(invoice));
+
+        li.appendChild(loadBtn);
+        dom.historyList.appendChild(li);
+      });
+    }
+
+    function loadInvoice(invoice) {
+      dom.invoiceNumber.value = invoice.id || "";
+      dom.invoiceDate.value = invoice.date || "";
+      dom.businessName.value = invoice.business?.name || "";
+      dom.businessTaxId.value = invoice.business?.taxId || "";
+      dom.clientName.value = invoice.client?.name || "";
+      dom.clientTaxId.value = invoice.client?.taxId || "";
+      dom.clientEmail.value = invoice.client?.email || "";
+      dom.clientPhone.value = invoice.client?.phone || "";
+      dom.taxRate.value = Number(invoice.taxRate) || 0;
+      dom.notes.value = invoice.notes || "";
+
+      items.length = 0;
+      (invoice.items || []).forEach((item) => {
+        items.push({
+          description: item.description,
+          qty: Number(item.qty),
+          price: Number(item.price)
+        });
+      });
+
+      renderItems();
+      renderPreview();
+    }
+
+    function resetInvoice() {
+      dom.invoiceNumber.value = `FAC-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`;
+      dom.invoiceDate.value = new Date().toISOString().slice(0, 10);
+      dom.businessName.value = "";
+      dom.businessTaxId.value = "";
+      dom.clientName.value = "";
+      dom.clientTaxId.value = "";
+      dom.clientEmail.value = "";
+      dom.clientPhone.value = "";
+      dom.taxRate.value = 19;
+      dom.notes.value = "Gracias por tu compra.";
+      dom.itemDescription.value = "";
+      dom.itemQty.value = 1;
+      dom.itemPrice.value = "";
+      items.length = 0;
+      renderItems();
+      renderPreview();
+    }
+
+    dom.addItemBtn.addEventListener("click", () => {
+      const description = dom.itemDescription.value.trim();
+      const qty = Number(dom.itemQty.value);
+      const price = Number(dom.itemPrice.value);
+
+      if (!description || qty <= 0 || price < 0) {
+        alert("Completa descripción, cantidad y precio válidos.");
+        return;
+      }
+
+      items.push({ description, qty, price });
+      dom.itemDescription.value = "";
+      dom.itemQty.value = 1;
+      dom.itemPrice.value = "";
+      renderItems();
+      renderPreview();
+    });
+
+    dom.itemsTableBody.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (!target.classList.contains("delete")) return;
+
+      const index = Number(target.dataset.index);
+      items.splice(index, 1);
+      renderItems();
+      renderPreview();
+    });
+
+    dom.taxRate.addEventListener("input", () => {
+      renderItems();
+      renderPreview();
+    });
+
+    [
+      dom.invoiceNumber, dom.invoiceDate, dom.businessName, dom.businessTaxId,
+      dom.clientName, dom.clientTaxId, dom.clientEmail, dom.clientPhone, dom.notes
+    ].forEach((field) => field.addEventListener("input", renderPreview));
+
+    dom.saveInvoiceBtn.addEventListener("click", () => {
+      const invoice = buildInvoiceObject();
+
+      if (!invoice.client.name) {
+        alert("Agrega al menos el nombre del cliente antes de guardar.");
+        return;
+      }
+      if (invoice.items.length === 0) {
+        alert("Agrega al menos un item.");
+        return;
+      }
+
+      const history = loadHistory();
+      const idx = history.findIndex((x) => x.id === invoice.id);
+
+      if (idx >= 0) history[idx] = invoice;
+      else history.push(invoice);
+
+      saveHistory(history);
+      renderHistory();
+      alert("Factura guardada correctamente.");
+    });
+
+    dom.newInvoiceBtn.addEventListener("click", resetInvoice);
+    dom.printInvoiceBtn.addEventListener("click", () => window.print());
+
+    resetInvoice();
+    renderHistory();
+  </script>
+</body>
 </html>
