@@ -3,549 +3,723 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Facturacion | te_amoblamos</title>
+  <title>Cuenta de Cobro | te_amoblamos</title>
   <style>
     :root {
-      --bg: #f4f7fb;
-      --panel: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --primary: #2563eb;
-      --danger: #b91c1c;
+      --line: #111;
+      --muted: #4b5563;
+      --bg: #f3f4f6;
+      --panel: #fff;
     }
 
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      color: var(--text);
+      font-family: "Times New Roman", serif;
       background: var(--bg);
+      color: #111;
     }
 
-    .app-header { padding: 24px 20px 8px; }
-    .app-header h1 { margin: 0 0 8px; }
-    .app-header p { margin: 0; color: var(--muted); }
-
-    .layout {
+    .page {
+      max-width: 1100px;
+      margin: 18px auto;
+      padding: 0 14px 24px;
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 360px 1fr;
       gap: 16px;
-      padding: 16px 20px 24px;
     }
 
-    .panel {
+    .controls {
       background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 14px;
+      height: fit-content;
+      position: sticky;
+      top: 12px;
     }
 
-    h2, h3 { margin-top: 0; }
-
-    .grid {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .grid.item-entry { grid-template-columns: 2fr 1fr 1fr auto; }
-
+    .controls h2 { margin: 0 0 10px; font-family: Arial, sans-serif; }
+    .controls h3 { margin: 16px 0 8px; font-family: Arial, sans-serif; }
     label {
       display: block;
-      font-size: 14px;
-      color: var(--muted);
+      margin-bottom: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      color: #333;
     }
-
     input, textarea, button {
       width: 100%;
-      margin-top: 6px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 9px;
       font: inherit;
+      font-family: Arial, sans-serif;
     }
-
-    input[readonly] {
-      background: #f9fafb;
-      color: #111827;
+    input[readonly] { background: #f8fafc; }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
-
+    .btns {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
     button {
       cursor: pointer;
-      border: none;
-      background: var(--primary);
+      border: 0;
+      background: #111827;
       color: #fff;
+      font-weight: 600;
+    }
+    button.secondary { background: #374151; }
+    button.danger { background: #b91c1c; }
+
+    .invoice-wrap {
+      background: var(--panel);
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      overflow: auto;
     }
 
-    button.secondary { background: #111827; }
-
-    button.delete {
-      background: var(--danger);
-      width: auto;
-      padding: 6px 10px;
+    /* Factura estilo */
+    #invoice {
+      width: 100%;
+      min-height: 1200px;
+      background: #fff;
+      padding: 6px 6px 16px;
     }
 
-    .table-wrap { overflow-x: auto; }
+    .top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .title {
+      font-size: 46px;
+      letter-spacing: 1px;
+      font-weight: 800;
+      margin: 0 0 4px;
+    }
+
+    .seller-line {
+      display: flex;
+      gap: 10px;
+      margin: 6px 0;
+      font-size: 18px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #111;
+      display: inline-block;
+      margin-right: 4px;
+    }
+
+    .logo-box {
+      width: 170px;
+      height: 110px;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      text-align: center;
+      padding: 8px;
+    }
+
+    .date-box {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      display: inline-grid;
+      grid-template-columns: auto 42px 42px 42px;
+    }
+
+    .date-box div {
+      border-right: 1px solid var(--line);
+      padding: 10px 8px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .date-box div:last-child { border-right: 0; }
+
+    .client-row {
+      margin: 14px 0 10px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: end;
+      font-size: 34px;
+      font-weight: 700;
+    }
+
+    .client-name {
+      border-bottom: 1px solid #111;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      font-size: 38px;
+      font-weight: 700;
+    }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 10px;
+      table-layout: fixed;
     }
 
     th, td {
-      border-bottom: 1px solid var(--line);
-      padding: 8px;
+      border: 1px solid var(--line);
+      padding: 8px 6px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    th {
+      font-weight: 800;
+      background: #fafafa;
+    }
+
+    td.desc {
       text-align: left;
-      font-size: 14px;
+      padding-left: 10px;
     }
 
-    .totals {
+    .totals-row {
+      margin-top: 8px;
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px 10px;
-      align-items: end;
-      margin: 14px 0;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
     }
 
-    .totals p { margin: 0; }
+    .total-letters {
+      border: 1px solid transparent;
+      padding: 8px 2px;
+      font-size: 34px;
+      font-weight: 700;
+    }
 
-    .actions {
+    .total-box {
+      border: 1px solid #111;
+      display: grid;
+      grid-template-columns: auto auto;
+      font-size: 33px;
+      font-weight: 800;
+    }
+
+    .total-box div {
+      border-right: 1px solid #111;
+      padding: 8px 12px;
+    }
+
+    .total-box div:last-child { border-right: 0; }
+
+    .pay-info {
+      margin-top: 34px;
+      font-size: 34px;
+      font-weight: 800;
+    }
+
+    .pay-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 26px;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .line-field {
+      border-bottom: 1px solid #111;
+      min-height: 42px;
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      align-items: center;
+      padding-right: 6px;
+      justify-content: space-between;
     }
 
-    .preview {
-      min-height: 180px;
-      border: 1px dashed var(--line);
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 16px;
-      background: #fcfdff;
+    .line-field small {
+      font-size: 23px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-right: 8px;
+      font-family: Arial, sans-serif;
     }
 
-    .history-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .small-note {
+      margin-top: 14px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      color: #4b5563;
     }
 
-    .history-list li {
-      border-bottom: 1px solid var(--line);
-      padding: 8px 0;
-    }
-
-    .history-list button { margin-top: 6px; }
-
-    @media (max-width: 980px) {
-      .layout { grid-template-columns: 1fr; }
-      .grid.two, .grid.item-entry, .totals { grid-template-columns: 1fr; }
+    @media (max-width: 1000px) {
+      .page { grid-template-columns: 1fr; }
+      .controls { position: static; }
+      .title { font-size: 30px; }
+      .client-row, .client-name, th, td, .pay-info, .pay-grid, .total-letters, .total-box { font-size: 18px; }
     }
 
     @media print {
-      .app-header, .actions, .history-list, #historyList, #newInvoiceBtn, #saveInvoiceBtn, #printInvoiceBtn, #addItemBtn {
-        display: none !important;
-      }
-
       body { background: #fff; }
-      .layout { grid-template-columns: 1fr; padding: 0; }
-      .panel { border: none; padding: 0; }
+      .page { display: block; margin: 0; padding: 0; max-width: none; }
+      .controls { display: none !important; }
+      .invoice-wrap {
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+      }
+      #invoice {
+        padding: 0;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="app-header">
-    <h1>Facturacion para te_amoblamos</h1>
-    <p>Crea, calcula y guarda tus facturas rapidamente.</p>
-  </header>
+  <div class="page">
+    <!-- Panel de edición -->
+    <section class="controls">
+      <h2>Editor de factura</h2>
 
-  <main class="layout">
-    <section class="panel">
-      <h2>Datos generales</h2>
-      <div class="grid two">
-        <label>Selecciona el dia
-          <input id="invoiceDate" type="date" required />
+      <h3>Datos fijos vendedor</h3>
+      <label>Nombre
+        <input id="sellerName" value="JHON TEILOR OSORIO ALVAREZ" readonly />
+      </label>
+      <label>Email
+        <input id="sellerEmail" value="Teilorosorio@gmail.com" readonly />
+      </label>
+      <label>Teléfono
+        <input id="sellerPhone" value="311-546-2451" readonly />
+      </label>
+      <label>Documento
+        <input id="sellerDoc" value="1315145210" readonly />
+      </label>
+
+      <h3>Datos factura</h3>
+      <div class="row-2">
+        <label>Fecha
+          <input id="invoiceDate" type="date" />
         </label>
-        <label>Numero factura
-          <input id="invoiceNumber" type="text" placeholder="FAC-0001" />
+        <label>Número
+          <input id="invoiceNumber" placeholder="CC-0001" />
         </label>
       </div>
+      <label>Cliente (SEÑOR(ES))
+        <input id="clientName" placeholder="Nombre del cliente" />
+      </label>
 
-      <h3>Datos del vendedor (fijos)</h3>
-      <div class="grid two">
-        <label>Nombre vendedor
-          <input id="businessName" type="text" value="JHON TEILOR OSORIO ALVAREZ" readonly />
+      <h3>Agregar item</h3>
+      <label>Descripción
+        <input id="itemDesc" placeholder="Ej: Camas de 1 metro" />
+      </label>
+      <div class="row-2">
+        <label>Cantidad
+          <input id="itemQty" type="number" min="1" value="1" />
         </label>
-        <label>Email vendedor
-          <input id="businessEmail" type="email" value="Teilorosorio@gmail.com" readonly />
+        <label>Valor unidad
+          <input id="itemUnit" type="number" min="0" step="1" placeholder="0" />
         </label>
       </div>
+      <button id="addItem">Agregar a tabla</button>
 
-      <div class="grid two">
-        <label>Telefono vendedor
-          <input id="businessPhone" type="text" value="311-546-2451" readonly />
-        </label>
-        <label>NIT / ID vendedor
-          <input id="businessTaxId" type="text" value="-" readonly />
-        </label>
+      <h3>Información de pago</h3>
+      <label>Número de cuenta
+        <input id="payAccount" placeholder="Ej: 0123456789" />
+      </label>
+      <label>Cédula
+        <input id="payCedula" placeholder="Ej: 1315145210" />
+      </label>
+      <label>Banco
+        <input id="payBank" placeholder="Ej: Bancolombia" />
+      </label>
+      <label>Notas
+        <textarea id="notes" rows="3" placeholder="Observaciones..."></textarea>
+      </label>
+
+      <div class="btns">
+        <button id="saveLocal">Guardar factura</button>
+        <button id="newInvoice" class="secondary">Nueva factura</button>
+        <button id="exportPdf" class="secondary">Descargar PDF (solo factura)</button>
+        <button id="clearItems" class="danger">Vaciar items</button>
       </div>
 
-      <h3>Cliente</h3>
-      <div class="grid two">
-        <label>Nombre cliente
-          <input id="clientName" type="text" placeholder="Nombre completo" />
-        </label>
-        <label>Documento / NIT
-          <input id="clientTaxId" type="text" placeholder="987654321" />
-        </label>
-      </div>
+      <p class="small-note">
+        Tip: esta versión imprime solo el documento de la derecha.
+      </p>
+    </section>
 
-      <div class="grid two">
-        <label>Email
-          <input id="clientEmail" type="email" placeholder="cliente@correo.com" />
-        </label>
-        <label>Telefono
-          <input id="clientPhone" type="text" placeholder="+57 000 000 0000" />
-        </label>
-      </div>
+    <!-- Documento -->
+    <section class="invoice-wrap">
+      <article id="invoice">
+        <div class="top">
+          <div>
+            <h1 class="title">CUENTA DE COBRO</h1>
+            <div class="seller-line"><span class="dot"></span><span id="vDoc">1315145210</span></div>
+            <div class="seller-line"><span class="dot"></span><span id="vName">JHON TEILOR OSORIO ALVAREZ</span></div>
+            <div class="seller-line"><span class="dot"></span><span id="vEmail">Teilorosorio@gmail.com</span></div>
+            <div class="seller-line"><span class="dot"></span><span id="vPhone">311-546-2451</span></div>
+          </div>
+          <div>
+            <div class="logo-box">
+              LOGO te_amoblamos
+              <br />
+              (puedes reemplazar por imagen)
+            </div>
+            <div class="date-box">
+              <div>FECHA</div>
+              <div id="dd">--</div>
+              <div id="mm">--</div>
+              <div id="yy">--</div>
+            </div>
+          </div>
+        </div>
 
-      <h2>Items</h2>
-      <div class="grid item-entry">
-        <input id="itemDescription" type="text" placeholder="Descripcion del producto o servicio" />
-        <input id="itemQty" type="number" min="1" value="1" placeholder="Cantidad" />
-        <input id="itemPrice" type="number" min="0" step="0.01" placeholder="Precio unitario" />
-        <button id="addItemBtn" type="button">Agregar item</button>
-      </div>
+        <div class="client-row">
+          <div>SEÑOR(ES)</div>
+          <div class="client-name" id="clientDisplay">-</div>
+        </div>
 
-      <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Descripcion</th>
-              <th>Cantidad</th>
-              <th>Precio</th>
-              <th>Subtotal</th>
-              <th></th>
+              <th style="width: 13%;">Cantidad</th>
+              <th style="width: 42%;">Descripción</th>
+              <th style="width: 22%;">VALOR UNIDAD</th>
+              <th style="width: 23%;">TOTAL</th>
             </tr>
           </thead>
-          <tbody id="itemsTableBody"></tbody>
+          <tbody id="itemsBody"></tbody>
         </table>
-      </div>
 
-      <div class="totals">
-        <label>IVA (%)
-          <input id="taxRate" type="number" min="0" step="0.01" value="19" />
-        </label>
-        <p>Subtotal: <strong id="subtotalValue">$0.00</strong></p>
-        <p>IVA: <strong id="taxValue">$0.00</strong></p>
-        <p>Total: <strong id="totalValue">$0.00</strong></p>
-      </div>
+        <div class="totals-row">
+          <div class="total-letters">
+            TOTAL: <span id="totalWords">cero pesos</span>
+          </div>
+          <div class="total-box">
+            <div>TOTAL</div>
+            <div id="totalNumber">0</div>
+          </div>
+        </div>
 
-      <label>Notas
-        <textarea id="notes" rows="3" placeholder="Gracias por tu compra."></textarea>
-      </label>
+        <div class="pay-info">INFORMACION DE PAGO</div>
+        <div class="pay-grid">
+          <div class="line-field"><small>NUMERO DE CUENTA:</small><span id="payAccountView">-</span></div>
+          <div class="line-field"><small>CEDULA:</small><span id="payCedulaView">-</span></div>
+          <div class="line-field"><small>BANCO:</small><span id="payBankView">-</span></div>
+          <div class="line-field"><small>FACTURA:</small><span id="invoiceNumberView">-</span></div>
+        </div>
 
-      <div class="actions">
-        <button id="saveInvoiceBtn" type="button">Guardar factura</button>
-        <button id="newInvoiceBtn" type="button" class="secondary">Nueva factura</button>
-        <button id="printInvoiceBtn" type="button" class="secondary">Imprimir / PDF</button>
-      </div>
+        <p class="small-note" id="notesView"></p>
+      </article>
     </section>
-
-    <aside class="panel">
-      <h2>Vista previa</h2>
-      <article id="preview" class="preview"></article>
-
-      <h2>Historial (local)</h2>
-      <ul id="historyList" class="history-list"></ul>
-    </aside>
-  </main>
+  </div>
 
   <script>
-    const STORAGE_KEY = "facturas_emprendimiento_v1";
+    const STORAGE_KEY = "te_amoblamos_facturas_pro_v1";
     const items = [];
 
+    const $ = (id) => document.getElementById(id);
+
     const dom = {
-      invoiceNumber: document.getElementById("invoiceNumber"),
-      invoiceDate: document.getElementById("invoiceDate"),
-      businessName: document.getElementById("businessName"),
-      businessEmail: document.getElementById("businessEmail"),
-      businessPhone: document.getElementById("businessPhone"),
-      businessTaxId: document.getElementById("businessTaxId"),
-      clientName: document.getElementById("clientName"),
-      clientTaxId: document.getElementById("clientTaxId"),
-      clientEmail: document.getElementById("clientEmail"),
-      clientPhone: document.getElementById("clientPhone"),
-      itemDescription: document.getElementById("itemDescription"),
-      itemQty: document.getElementById("itemQty"),
-      itemPrice: document.getElementById("itemPrice"),
-      taxRate: document.getElementById("taxRate"),
-      notes: document.getElementById("notes"),
-      itemsTableBody: document.getElementById("itemsTableBody"),
-      subtotalValue: document.getElementById("subtotalValue"),
-      taxValue: document.getElementById("taxValue"),
-      totalValue: document.getElementById("totalValue"),
-      preview: document.getElementById("preview"),
-      historyList: document.getElementById("historyList"),
-      addItemBtn: document.getElementById("addItemBtn"),
-      saveInvoiceBtn: document.getElementById("saveInvoiceBtn"),
-      newInvoiceBtn: document.getElementById("newInvoiceBtn"),
-      printInvoiceBtn: document.getElementById("printInvoiceBtn")
+      sellerName: $("sellerName"),
+      sellerEmail: $("sellerEmail"),
+      sellerPhone: $("sellerPhone"),
+      sellerDoc: $("sellerDoc"),
+      invoiceDate: $("invoiceDate"),
+      invoiceNumber: $("invoiceNumber"),
+      clientName: $("clientName"),
+      itemDesc: $("itemDesc"),
+      itemQty: $("itemQty"),
+      itemUnit: $("itemUnit"),
+      payAccount: $("payAccount"),
+      payCedula: $("payCedula"),
+      payBank: $("payBank"),
+      notes: $("notes"),
+      itemsBody: $("itemsBody"),
+      totalNumber: $("totalNumber"),
+      totalWords: $("totalWords"),
+      saveLocal: $("saveLocal"),
+      newInvoice: $("newInvoice"),
+      exportPdf: $("exportPdf"),
+      addItem: $("addItem"),
+      clearItems: $("clearItems"),
+      // vista
+      vName: $("vName"),
+      vEmail: $("vEmail"),
+      vPhone: $("vPhone"),
+      vDoc: $("vDoc"),
+      dd: $("dd"),
+      mm: $("mm"),
+      yy: $("yy"),
+      clientDisplay: $("clientDisplay"),
+      payAccountView: $("payAccountView"),
+      payCedulaView: $("payCedulaView"),
+      payBankView: $("payBankView"),
+      invoiceNumberView: $("invoiceNumberView"),
+      notesView: $("notesView"),
+      invoice: $("invoice")
     };
 
-    function currency(value) {
-      return new Intl.NumberFormat("es-CO", {
-        style: "currency",
-        currency: "COP",
-        minimumFractionDigits: 2
-      }).format(value || 0);
+    function money(n) {
+      return new Intl.NumberFormat("es-CO").format(Math.round(Number(n) || 0));
     }
 
-    function getSubTotal() {
-      return items.reduce((acc, item) => acc + item.qty * item.price, 0);
+    // conversor simple (0..999,999,999)
+    function toWordsES(num) {
+      num = Math.floor(Number(num) || 0);
+      if (num === 0) return "cero pesos";
+
+      const u = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
+      const d10 = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciseis", "diecisiete", "dieciocho", "diecinueve"];
+      const d = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
+      const c = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
+
+      function two(n) {
+        if (n < 10) return u[n];
+        if (n < 20) return d10[n - 10];
+        if (n < 30) return n === 20 ? "veinte" : "veinti" + u[n - 20];
+        const dec = Math.floor(n / 10), uni = n % 10;
+        return d[dec] + (uni ? " y " + u[uni] : "");
+      }
+
+      function three(n) {
+        if (n === 0) return "";
+        if (n === 100) return "cien";
+        const cen = Math.floor(n / 100), rest = n % 100;
+        return (cen ? c[cen] : "") + (cen && rest ? " " : "") + two(rest);
+      }
+
+      function section(n, singular, plural) {
+        if (n === 0) return "";
+        if (n === 1) return singular;
+        return three(n) + " " + plural;
+      }
+
+      const millones = Math.floor(num / 1000000);
+      const miles = Math.floor((num % 1000000) / 1000);
+      const cientos = num % 1000;
+
+      let text = "";
+      if (millones) text += section(millones, "un millon", "millones");
+      if (miles) text += (text ? " " : "") + (miles === 1 ? "mil" : three(miles) + " mil");
+      if (cientos) text += (text ? " " : "") + three(cientos);
+
+      return text.trim() + " pesos";
     }
 
-    function getTax() {
-      const taxRate = Number(dom.taxRate.value) || 0;
-      return getSubTotal() * (taxRate / 100);
+    function total() {
+      return items.reduce((acc, it) => acc + (it.qty * it.unit), 0);
     }
 
-    function getTotal() {
-      return getSubTotal() + getTax();
+    function renderDateBoxes() {
+      const date = dom.invoiceDate.value;
+      if (!date) {
+        dom.dd.textContent = "--";
+        dom.mm.textContent = "--";
+        dom.yy.textContent = "--";
+        return;
+      }
+      const [y, m, d] = date.split("-");
+      dom.dd.textContent = d;
+      dom.mm.textContent = m;
+      dom.yy.textContent = y.slice(-2);
     }
 
     function renderItems() {
-      dom.itemsTableBody.innerHTML = "";
+      dom.itemsBody.innerHTML = "";
 
-      if (items.length === 0) {
-        const row = document.createElement("tr");
-        row.innerHTML = "<td colspan='5'>Aun no hay items.</td>";
-        dom.itemsTableBody.appendChild(row);
+      if (!items.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = "<td>-</td><td class='desc'>Sin items</td><td>-</td><td>-</td>";
+        dom.itemsBody.appendChild(tr);
       } else {
-        items.forEach((item, index) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${item.description}</td>
-            <td>${item.qty}</td>
-            <td>${currency(item.price)}</td>
-            <td>${currency(item.qty * item.price)}</td>
-            <td><button class="delete" data-index="${index}" type="button">Eliminar</button></td>
+        items.forEach((it, idx) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${it.qty}</td>
+            <td class="desc">${it.desc}</td>
+            <td>${money(it.unit)}</td>
+            <td>${money(it.qty * it.unit)}</td>
           `;
-          dom.itemsTableBody.appendChild(row);
+          tr.title = "Doble clic para eliminar";
+          tr.ondblclick = () => {
+            items.splice(idx, 1);
+            renderAll();
+          };
+          dom.itemsBody.appendChild(tr);
         });
       }
 
-      dom.subtotalValue.textContent = currency(getSubTotal());
-      dom.taxValue.textContent = currency(getTax());
-      dom.totalValue.textContent = currency(getTotal());
+      const t = total();
+      dom.totalNumber.textContent = money(t);
+      dom.totalWords.textContent = toWordsES(t);
     }
 
-    function buildInvoiceObject() {
+    function renderHeader() {
+      dom.vName.textContent = dom.sellerName.value;
+      dom.vEmail.textContent = dom.sellerEmail.value;
+      dom.vPhone.textContent = dom.sellerPhone.value;
+      dom.vDoc.textContent = dom.sellerDoc.value;
+      dom.clientDisplay.textContent = dom.clientName.value || "-";
+      dom.payAccountView.textContent = dom.payAccount.value || "-";
+      dom.payCedulaView.textContent = dom.payCedula.value || "-";
+      dom.payBankView.textContent = dom.payBank.value || "-";
+      dom.invoiceNumberView.textContent = dom.invoiceNumber.value || "-";
+      dom.notesView.textContent = dom.notes.value ? "Notas: " + dom.notes.value : "";
+      renderDateBoxes();
+    }
+
+    function buildInvoice() {
       return {
-        id: dom.invoiceNumber.value.trim() || `FAC-${Date.now()}`,
-        date: dom.invoiceDate.value,
-        business: {
-          name: dom.businessName.value.trim(),
-          email: dom.businessEmail.value.trim(),
-          phone: dom.businessPhone.value.trim(),
-          taxId: dom.businessTaxId.value.trim()
+        seller: {
+          name: dom.sellerName.value,
+          email: dom.sellerEmail.value,
+          phone: dom.sellerPhone.value,
+          doc: dom.sellerDoc.value
         },
-        client: {
-          name: dom.clientName.value.trim(),
-          taxId: dom.clientTaxId.value.trim(),
-          email: dom.clientEmail.value.trim(),
-          phone: dom.clientPhone.value.trim()
-        },
-        items: items.map((item) => ({ ...item })),
-        taxRate: Number(dom.taxRate.value) || 0,
-        notes: dom.notes.value.trim(),
-        subtotal: getSubTotal(),
-        tax: getTax(),
-        total: getTotal()
+        invoiceDate: dom.invoiceDate.value,
+        invoiceNumber: dom.invoiceNumber.value,
+        clientName: dom.clientName.value,
+        payAccount: dom.payAccount.value,
+        payCedula: dom.payCedula.value,
+        payBank: dom.payBank.value,
+        notes: dom.notes.value,
+        items: items.slice(),
+        total: total()
       };
     }
 
-    function renderPreview() {
-      const data = buildInvoiceObject();
-      const rows = data.items
-        .map((item) => `<li>${item.description} | ${item.qty} x ${currency(item.price)} = ${currency(item.qty * item.price)}</li>`)
-        .join("");
-
-      dom.preview.innerHTML = `
-        <h3>Factura ${data.id}</h3>
-        <p><strong>Fecha:</strong> ${data.date || "-"}</p>
-        <p><strong>Vendedor:</strong> ${data.business.name || "-"}</p>
-        <p><strong>Email vendedor:</strong> ${data.business.email || "-"}</p>
-        <p><strong>Telefono vendedor:</strong> ${data.business.phone || "-"}</p>
-        <p><strong>Cliente:</strong> ${data.client.name || "-"} ${data.client.taxId ? `(${data.client.taxId})` : ""}</p>
-        <ul>${rows || "<li>Sin items</li>"}</ul>
-        <p><strong>Subtotal:</strong> ${currency(data.subtotal)}</p>
-        <p><strong>IVA (${data.taxRate}%):</strong> ${currency(data.tax)}</p>
-        <p><strong>Total:</strong> ${currency(data.total)}</p>
-        <p><strong>Notas:</strong> ${data.notes || "-"}</p>
-      `;
+    function saveLocal() {
+      const data = buildInvoice();
+      if (!data.clientName) return alert("Escribe el nombre del cliente.");
+      if (!data.items.length) return alert("Agrega al menos un item.");
+      const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const idx = all.findIndex(x => x.invoiceNumber === data.invoiceNumber && data.invoiceNumber);
+      if (idx >= 0) all[idx] = data; else all.push(data);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+      alert("Factura guardada localmente.");
     }
 
-    function loadHistory() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : [];
-    }
-
-    function saveHistory(list) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    }
-
-    function renderHistory() {
-      const history = loadHistory();
-      dom.historyList.innerHTML = "";
-
-      if (history.length === 0) {
-        dom.historyList.innerHTML = "<li>No hay facturas guardadas aun.</li>";
-        return;
-      }
-
-      history.slice().reverse().forEach((invoice) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <strong>${invoice.id}</strong> - ${invoice.client.name || "Cliente"}<br>
-          ${invoice.date || "Sin fecha"} | ${currency(invoice.total)}
-        `;
-
-        const loadBtn = document.createElement("button");
-        loadBtn.type = "button";
-        loadBtn.textContent = "Cargar";
-        loadBtn.addEventListener("click", () => loadInvoice(invoice));
-
-        li.appendChild(loadBtn);
-        dom.historyList.appendChild(li);
-      });
-    }
-
-    function loadInvoice(invoice) {
-      dom.invoiceNumber.value = invoice.id || "";
-      dom.invoiceDate.value = invoice.date || "";
-      dom.businessName.value = invoice.business?.name || "JHON TEILOR OSORIO ALVAREZ";
-      dom.businessEmail.value = invoice.business?.email || "Teilorosorio@gmail.com";
-      dom.businessPhone.value = invoice.business?.phone || "311-546-2451";
-      dom.businessTaxId.value = invoice.business?.taxId || "-";
-      dom.clientName.value = invoice.client?.name || "";
-      dom.clientTaxId.value = invoice.client?.taxId || "";
-      dom.clientEmail.value = invoice.client?.email || "";
-      dom.clientPhone.value = invoice.client?.phone || "";
-      dom.taxRate.value = Number(invoice.taxRate) || 0;
-      dom.notes.value = invoice.notes || "";
-
-      items.length = 0;
-      (invoice.items || []).forEach((item) => {
-        items.push({
-          description: item.description,
-          qty: Number(item.qty),
-          price: Number(item.price)
-        });
-      });
-
-      renderItems();
-      renderPreview();
-    }
-
-    function resetInvoice() {
-      dom.invoiceNumber.value = `FAC-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`;
-      dom.invoiceDate.value = new Date().toISOString().slice(0, 10);
-      dom.businessName.value = "JHON TEILOR OSORIO ALVAREZ";
-      dom.businessEmail.value = "Teilorosorio@gmail.com";
-      dom.businessPhone.value = "311-546-2451";
-      dom.businessTaxId.value = "-";
+    function resetForm() {
+      const today = new Date().toISOString().slice(0, 10);
+      dom.invoiceDate.value = today;
+      dom.invoiceNumber.value = "CC-" + Date.now().toString().slice(-4);
       dom.clientName.value = "";
-      dom.clientTaxId.value = "";
-      dom.clientEmail.value = "";
-      dom.clientPhone.value = "";
-      dom.taxRate.value = 19;
-      dom.notes.value = "Gracias por tu compra.";
-      dom.itemDescription.value = "";
+      dom.itemDesc.value = "";
       dom.itemQty.value = 1;
-      dom.itemPrice.value = "";
+      dom.itemUnit.value = "";
+      dom.payAccount.value = "";
+      dom.payCedula.value = dom.sellerDoc.value;
+      dom.payBank.value = "";
+      dom.notes.value = "";
       items.length = 0;
-      renderItems();
-      renderPreview();
+      renderAll();
     }
 
-    dom.addItemBtn.addEventListener("click", () => {
-      const description = dom.itemDescription.value.trim();
+    function renderAll() {
+      renderHeader();
+      renderItems();
+    }
+
+    dom.addItem.addEventListener("click", () => {
+      const desc = dom.itemDesc.value.trim();
       const qty = Number(dom.itemQty.value);
-      const price = Number(dom.itemPrice.value);
+      const unit = Number(dom.itemUnit.value);
 
-      if (!description || qty <= 0 || price < 0) {
-        alert("Completa descripcion, cantidad y precio validos.");
-        return;
-      }
+      if (!desc) return alert("Escribe una descripcion.");
+      if (!(qty > 0)) return alert("Cantidad invalida.");
+      if (!(unit >= 0)) return alert("Valor unidad invalido.");
 
-      items.push({ description, qty, price });
-      dom.itemDescription.value = "";
+      items.push({ desc, qty, unit });
+      dom.itemDesc.value = "";
       dom.itemQty.value = 1;
-      dom.itemPrice.value = "";
-      renderItems();
-      renderPreview();
+      dom.itemUnit.value = "";
+      renderAll();
     });
 
-    dom.itemsTableBody.addEventListener("click", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) return;
-      if (!target.classList.contains("delete")) return;
-
-      const index = Number(target.dataset.index);
-      items.splice(index, 1);
-      renderItems();
-      renderPreview();
+    dom.clearItems.addEventListener("click", () => {
+      if (!confirm("¿Vaciar todos los items?")) return;
+      items.length = 0;
+      renderAll();
     });
 
-    dom.taxRate.addEventListener("input", () => {
-      renderItems();
-      renderPreview();
+    dom.saveLocal.addEventListener("click", saveLocal);
+    dom.newInvoice.addEventListener("click", resetForm);
+
+    // Descarga PDF solo de la factura (no panel izquierdo)
+    dom.exportPdf.addEventListener("click", () => {
+      const html = dom.invoice.outerHTML;
+      const w = window.open("", "_blank", "width=1200,height=900");
+      w.document.write(`
+        <!doctype html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Factura</title>
+          <style>
+            body { margin: 0; font-family: "Times New Roman", serif; }
+            #invoice { padding: 24px; }
+            table { width:100%; border-collapse: collapse; margin-top:10px; table-layout:fixed; }
+            th, td { border:1px solid #111; padding:8px 6px; text-align:center; vertical-align:middle; font-size:28px; line-height:1.1; }
+            td.desc { text-align:left; padding-left:10px; }
+            .title { font-size:46px; font-weight:800; margin:0 0 4px; }
+            .top { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:start; }
+            .logo-box { width:170px; height:110px; border:1px solid #111; display:flex; align-items:center; justify-content:center; font-family:Arial,sans-serif; font-size:14px; text-align:center; padding:8px; }
+            .date-box { margin-top:12px; border:1px solid #111; display:inline-grid; grid-template-columns:auto 42px 42px 42px; }
+            .date-box div { border-right:1px solid #111; padding:10px 8px; text-align:center; font-family:Arial,sans-serif; font-weight:700; font-size:14px; }
+            .date-box div:last-child { border-right:0; }
+            .seller-line { display:flex; gap:10px; margin:6px 0; font-size:18px; align-items:center; }
+            .dot { width:9px; height:9px; border-radius:999px; background:#111; display:inline-block; margin-right:4px; }
+            .client-row { margin:14px 0 10px; display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:end; font-size:34px; font-weight:700; }
+            .client-name { border-bottom:1px solid #111; min-height:42px; display:flex; align-items:center; font-size:38px; font-weight:700; }
+            .totals-row { margin-top:8px; display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; }
+            .total-letters { padding:8px 2px; font-size:34px; font-weight:700; }
+            .total-box { border:1px solid #111; display:grid; grid-template-columns:auto auto; font-size:33px; font-weight:800; }
+            .total-box div { border-right:1px solid #111; padding:8px 12px; }
+            .total-box div:last-child { border-right:0; }
+            .pay-info { margin-top:34px; font-size:34px; font-weight:800; }
+            .pay-grid { margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:10px 26px; font-size:30px; font-weight:700; }
+            .line-field { border-bottom:1px solid #111; min-height:42px; display:flex; align-items:center; padding-right:6px; justify-content:space-between; }
+            .line-field small { font-size:23px; font-weight:600; color:#4b5563; margin-right:8px; font-family:Arial,sans-serif; }
+            .small-note { margin-top:14px; font-size:14px; font-family:Arial,sans-serif; color:#4b5563; }
+          </style>
+        </head>
+        <body>
+          ${html}
+          <script>
+            window.onload = function() {
+              window.print();
+              window.onafterprint = function(){ window.close(); };
+            };
+          <\/script>
+        </body>
+        </html>
+      `);
+      w.document.close();
     });
 
     [
-      dom.invoiceNumber,
-      dom.invoiceDate,
-      dom.clientName,
-      dom.clientTaxId,
-      dom.clientEmail,
-      dom.clientPhone,
-      dom.notes
-    ].forEach((field) => {
-      field.addEventListener("input", renderPreview);
-    });
+      "invoiceDate", "invoiceNumber", "clientName",
+      "payAccount", "payCedula", "payBank", "notes"
+    ].forEach((id) => $(id).addEventListener("input", renderHeader));
 
-    dom.saveInvoiceBtn.addEventListener("click", () => {
-      const invoice = buildInvoiceObject();
-
-      if (!invoice.client.name) {
-        alert("Agrega al menos el nombre del cliente antes de guardar.");
-        return;
-      }
-      if (invoice.items.length === 0) {
-        alert("Agrega al menos un item.");
-        return;
-      }
-
-      const history = loadHistory();
-      const idx = history.findIndex((x) => x.id === invoice.id);
-
-      if (idx >= 0) history[idx] = invoice;
-      else history.push(invoice);
-
-      saveHistory(history);
-      renderHistory();
-      alert("Factura guardada correctamente.");
-    });
-
-    dom.newInvoiceBtn.addEventListener("click", resetInvoice);
-    dom.printInvoiceBtn.addEventListener("click", () => window.print());
-
-    resetInvoice();
-    renderHistory();
+    resetForm();
   </script>
 </body>
 </html>
