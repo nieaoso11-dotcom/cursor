@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Facturación | Emprendimiento</title>
+  <title>Facturacion | te_amoblamos</title>
   <style>
     :root {
       --bg: #f4f7fb;
@@ -153,26 +153,26 @@
 </head>
 <body>
   <header class="app-header">
-    <h1>Facturación para Emprendimiento</h1>
-    <p>Crea, calcula y guarda tus facturas rápidamente.</p>
+    <h1>Facturacion para te_amoblamos</h1>
+    <p>Crea, calcula y guarda tus facturas rapidamente.</p>
   </header>
 
   <main class="layout">
     <section class="panel">
       <h2>Datos generales</h2>
       <div class="grid two">
-        <label>Número factura
-          <input id="invoiceNumber" type="text" placeholder="FAC-0001" />
+        <label>Selecciona el dia
+          <input id="invoiceDate" type="date" required />
         </label>
-        <label>Fecha
-          <input id="invoiceDate" type="date" />
+        <label>Numero factura
+          <input id="invoiceNumber" type="text" placeholder="FAC-0001" />
         </label>
       </div>
 
       <h3>Tu negocio</h3>
       <div class="grid two">
         <label>Nombre negocio
-          <input id="businessName" type="text" placeholder="Mi Emprendimiento" />
+          <input id="businessName" type="text" value="te_amoblamos" />
         </label>
         <label>NIT / ID
           <input id="businessTaxId" type="text" placeholder="123456789" />
@@ -193,14 +193,14 @@
         <label>Email
           <input id="clientEmail" type="email" placeholder="cliente@correo.com" />
         </label>
-        <label>Teléfono
+        <label>Telefono
           <input id="clientPhone" type="text" placeholder="+57 000 000 0000" />
         </label>
       </div>
 
       <h2>Items</h2>
       <div class="grid item-entry">
-        <input id="itemDescription" type="text" placeholder="Descripción del producto o servicio" />
+        <input id="itemDescription" type="text" placeholder="Descripcion del producto o servicio" />
         <input id="itemQty" type="number" min="1" value="1" placeholder="Cantidad" />
         <input id="itemPrice" type="number" min="0" step="0.01" placeholder="Precio unitario" />
         <button id="addItemBtn" type="button">Agregar item</button>
@@ -210,7 +210,7 @@
         <table>
           <thead>
             <tr>
-              <th>Descripción</th>
+              <th>Descripcion</th>
               <th>Cantidad</th>
               <th>Precio</th>
               <th>Subtotal</th>
@@ -306,7 +306,7 @@
 
       if (items.length === 0) {
         const row = document.createElement("tr");
-        row.innerHTML = "<td colspan='5'>Aún no hay items.</td>";
+        row.innerHTML = "<td colspan='5'>Aun no hay items.</td>";
         dom.itemsTableBody.appendChild(row);
       } else {
         items.forEach((item, index) => {
@@ -383,7 +383,7 @@
       dom.historyList.innerHTML = "";
 
       if (history.length === 0) {
-        dom.historyList.innerHTML = "<li>No hay facturas guardadas aún.</li>";
+        dom.historyList.innerHTML = "<li>No hay facturas guardadas aun.</li>";
         return;
       }
 
@@ -432,7 +432,7 @@
     function resetInvoice() {
       dom.invoiceNumber.value = `FAC-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`;
       dom.invoiceDate.value = new Date().toISOString().slice(0, 10);
-      dom.businessName.value = "";
+      dom.businessName.value = "te_amoblamos";
       dom.businessTaxId.value = "";
       dom.clientName.value = "";
       dom.clientTaxId.value = "";
@@ -454,7 +454,7 @@
       const price = Number(dom.itemPrice.value);
 
       if (!description || qty <= 0 || price < 0) {
-        alert("Completa descripción, cantidad y precio válidos.");
+        alert("Completa descripcion, cantidad y precio validos.");
         return;
       }
 
@@ -483,9 +483,18 @@
     });
 
     [
-      dom.invoiceNumber, dom.invoiceDate, dom.businessName, dom.businessTaxId,
-      dom.clientName, dom.clientTaxId, dom.clientEmail, dom.clientPhone, dom.notes
-    ].forEach((field) => field.addEventListener("input", renderPreview));
+      dom.invoiceNumber,
+      dom.invoiceDate,
+      dom.businessName,
+      dom.businessTaxId,
+      dom.clientName,
+      dom.clientTaxId,
+      dom.clientEmail,
+      dom.clientPhone,
+      dom.notes
+    ].forEach((field) => {
+      field.addEventListener("input", renderPreview);
+    });
 
     dom.saveInvoiceBtn.addEventListener("click", () => {
       const invoice = buildInvoiceObject();
