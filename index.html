@@ -68,6 +68,11 @@
       font: inherit;
     }
 
+    input[readonly] {
+      background: #f9fafb;
+      color: #111827;
+    }
+
     button {
       cursor: pointer;
       border: none;
@@ -169,13 +174,22 @@
         </label>
       </div>
 
-      <h3>Tu negocio</h3>
+      <h3>Datos del vendedor (fijos)</h3>
       <div class="grid two">
-        <label>Nombre negocio
-          <input id="businessName" type="text" value="te_amoblamos" />
+        <label>Nombre vendedor
+          <input id="businessName" type="text" value="JHON TEILOR OSORIO ALVAREZ" readonly />
         </label>
-        <label>NIT / ID
-          <input id="businessTaxId" type="text" placeholder="123456789" />
+        <label>Email vendedor
+          <input id="businessEmail" type="email" value="Teilorosorio@gmail.com" readonly />
+        </label>
+      </div>
+
+      <div class="grid two">
+        <label>Telefono vendedor
+          <input id="businessPhone" type="text" value="311-546-2451" readonly />
+        </label>
+        <label>NIT / ID vendedor
+          <input id="businessTaxId" type="text" value="-" readonly />
         </label>
       </div>
 
@@ -258,6 +272,8 @@
       invoiceNumber: document.getElementById("invoiceNumber"),
       invoiceDate: document.getElementById("invoiceDate"),
       businessName: document.getElementById("businessName"),
+      businessEmail: document.getElementById("businessEmail"),
+      businessPhone: document.getElementById("businessPhone"),
       businessTaxId: document.getElementById("businessTaxId"),
       clientName: document.getElementById("clientName"),
       clientTaxId: document.getElementById("clientTaxId"),
@@ -333,6 +349,8 @@
         date: dom.invoiceDate.value,
         business: {
           name: dom.businessName.value.trim(),
+          email: dom.businessEmail.value.trim(),
+          phone: dom.businessPhone.value.trim(),
           taxId: dom.businessTaxId.value.trim()
         },
         client: {
@@ -359,7 +377,9 @@
       dom.preview.innerHTML = `
         <h3>Factura ${data.id}</h3>
         <p><strong>Fecha:</strong> ${data.date || "-"}</p>
-        <p><strong>Negocio:</strong> ${data.business.name || "-"} ${data.business.taxId ? `(${data.business.taxId})` : ""}</p>
+        <p><strong>Vendedor:</strong> ${data.business.name || "-"}</p>
+        <p><strong>Email vendedor:</strong> ${data.business.email || "-"}</p>
+        <p><strong>Telefono vendedor:</strong> ${data.business.phone || "-"}</p>
         <p><strong>Cliente:</strong> ${data.client.name || "-"} ${data.client.taxId ? `(${data.client.taxId})` : ""}</p>
         <ul>${rows || "<li>Sin items</li>"}</ul>
         <p><strong>Subtotal:</strong> ${currency(data.subtotal)}</p>
@@ -407,8 +427,10 @@
     function loadInvoice(invoice) {
       dom.invoiceNumber.value = invoice.id || "";
       dom.invoiceDate.value = invoice.date || "";
-      dom.businessName.value = invoice.business?.name || "";
-      dom.businessTaxId.value = invoice.business?.taxId || "";
+      dom.businessName.value = invoice.business?.name || "JHON TEILOR OSORIO ALVAREZ";
+      dom.businessEmail.value = invoice.business?.email || "Teilorosorio@gmail.com";
+      dom.businessPhone.value = invoice.business?.phone || "311-546-2451";
+      dom.businessTaxId.value = invoice.business?.taxId || "-";
       dom.clientName.value = invoice.client?.name || "";
       dom.clientTaxId.value = invoice.client?.taxId || "";
       dom.clientEmail.value = invoice.client?.email || "";
@@ -432,8 +454,10 @@
     function resetInvoice() {
       dom.invoiceNumber.value = `FAC-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`;
       dom.invoiceDate.value = new Date().toISOString().slice(0, 10);
-      dom.businessName.value = "te_amoblamos";
-      dom.businessTaxId.value = "";
+      dom.businessName.value = "JHON TEILOR OSORIO ALVAREZ";
+      dom.businessEmail.value = "Teilorosorio@gmail.com";
+      dom.businessPhone.value = "311-546-2451";
+      dom.businessTaxId.value = "-";
       dom.clientName.value = "";
       dom.clientTaxId.value = "";
       dom.clientEmail.value = "";
@@ -485,8 +509,6 @@
     [
       dom.invoiceNumber,
       dom.invoiceDate,
-      dom.businessName,
-      dom.businessTaxId,
       dom.clientName,
       dom.clientTaxId,
       dom.clientEmail,
