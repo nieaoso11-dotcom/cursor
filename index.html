@@ -3,844 +3,819 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cuenta de Cobro | te_amoblamos</title>
-
+  <title>te_amoblamos | Cuenta de cobro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --navy: #12253f;
-      --navy-2: #1b3558;
-      --light: #f6f9ff;
-      --line: #dbe6f5;
-      --text: #0f2340;
-      --muted: #7792b5;
-      --orange: #f4a62a;
-      --green: #00a63e;
-      --white: #ffffff;
-      --radius: 16px;
+    :root{
+      --bg:#edf3fb;
+      --card:#ffffff;
+      --line:#dbe6f5;
+      --text:#10243f;
+      --muted:#6f86a8;
+      --navy:#132743;
+      --orange:#f4a62a;
+      --green:#06a247;
+      --danger:#c12f2f;
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Arial,sans-serif;
+      color:var(--text);
+      background:var(--bg);
     }
 
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Inter, system-ui, Arial, sans-serif;
-      background: #eef3fb;
-      color: var(--text);
+    .container{
+      max-width:1280px;
+      margin:20px auto;
+      padding:0 16px 20px;
     }
 
-    .app {
-      max-width: 1320px;
-      margin: 20px auto;
-      padding: 0 16px 20px;
-      display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 16px;
+    .tabs{
+      display:flex; gap:8px; margin-bottom:12px;
+    }
+    .tab-btn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      font-weight:700;
+      border-radius:10px;
+      padding:10px 14px;
+      cursor:pointer;
+    }
+    .tab-btn.active{
+      background:var(--navy);
+      color:#fff;
+      border-color:var(--navy);
     }
 
-    .panel {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 14px;
-      height: fit-content;
-      position: sticky;
-      top: 12px;
-      box-shadow: 0 10px 35px rgba(18, 37, 63, 0.08);
+    .tab{display:none}
+    .tab.active{display:block}
+
+    .layout{
+      display:grid;
+      grid-template-columns:340px 1fr;
+      gap:14px;
     }
 
-    .panel h2 {
-      margin: 0 0 10px;
-      font-family: Montserrat, sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--navy);
+    .panel, .sheet, .history-wrap{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:0 8px 24px rgba(19,39,67,.08);
     }
 
-    .section {
-      margin-top: 14px;
-      border-top: 1px solid #edf2fa;
-      padding-top: 12px;
+    .panel{
+      padding:14px;
+      position:sticky;
+      top:10px;
+      height:fit-content;
     }
 
-    .section-title {
-      margin: 0 0 8px;
-      font-size: 12px;
-      font-weight: 800;
-      color: #4a6489;
-      text-transform: uppercase;
-      letter-spacing: .8px;
+    .panel h3{
+      margin:0 0 10px;
+      font-size:18px;
+      font-weight:800;
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #486081;
+    .sec{
+      margin-top:12px;
+      border-top:1px solid #edf2fa;
+      padding-top:10px;
     }
 
-    input, textarea, button {
-      width: 100%;
-      margin-top: 4px;
-      padding: 10px;
-      border: 1px solid #d8e3f3;
-      border-radius: 10px;
-      font: inherit;
-      color: var(--text);
-      background: #fff;
+    .sec-title{
+      margin:0 0 8px;
+      font-size:12px;
+      color:#4a648a;
+      font-weight:800;
+      letter-spacing:.6px;
+      text-transform:uppercase;
     }
 
-    input[readonly] {
-      background: #f8fbff;
-      font-weight: 700;
+    label{
+      display:block;
+      font-size:12px;
+      color:#4f688d;
+      font-weight:700;
+      margin-bottom:8px;
     }
 
-    .row2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+    input, textarea, button{
+      width:100%;
+      margin-top:4px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:10px;
+      font:inherit;
+      color:var(--text);
+      background:#fff;
     }
 
-    .btns {
-      display: grid;
-      gap: 8px;
-      margin-top: 10px;
+    input[readonly]{
+      background:#f7fbff;
+      font-weight:700;
     }
 
-    button {
-      border: 0;
-      cursor: pointer;
-      font-weight: 800;
-      color: #fff;
-      background: var(--navy);
-      transition: .2s;
-    }
-    button:hover { transform: translateY(-1px); }
-    .btn-orange { background: var(--orange); color: #102238; }
-    .btn-blue { background: #2b5ea8; }
-    .btn-danger { background: #c62828; }
-
-    .sheet-wrap {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: 0 10px 35px rgba(18, 37, 63, 0.08);
+    .row2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
     }
 
-    .invoice {
-      background: #fff;
-      border-radius: 14px;
-      border: 1px solid #e6edf8;
-      padding: 18px;
-      min-height: 920px;
+    .btns{
+      display:grid;
+      gap:8px;
+      margin-top:8px;
     }
 
-    .top {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      align-items: start;
+    button{
+      border:0;
+      color:#fff;
+      background:var(--navy);
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn-orange{ background:var(--orange); color:#132743; }
+    .btn-danger{ background:var(--danger); }
+
+    .sheet{ padding:14px; }
+
+    .invoice{
+      border:1px solid #e6edf8;
+      border-radius:12px;
+      background:#fff;
+      padding:16px;
+      min-height:720px;
     }
 
-    .brand-line {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+    .top{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:start;
     }
 
-    .logo-box {
-      width: 92px;
-      height: 92px;
-      border-radius: 16px;
-      background: var(--navy);
-      color: var(--orange);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Montserrat, sans-serif;
-      font-size: 30px;
-      font-weight: 900;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .logo{
+      width:70px;
+      height:70px;
+      border-radius:14px;
+      background:var(--navy);
+      color:var(--orange);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:Montserrat,sans-serif;
+      font-weight:900;
+      font-size:20px;
+    }
+    .brand-name{
+      margin:0;
+      font-family:Montserrat,sans-serif;
+      font-weight:900;
+      font-size:34px;
+      line-height:1;
+      letter-spacing:.5px;
+    }
+    .brand-sub{
+      margin:4px 0 0;
+      color:var(--orange);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:2px;
+      text-transform:uppercase;
     }
 
-    .brand-name {
-      font-family: Montserrat, sans-serif;
-      font-style: italic;
-      font-size: 54px;
-      font-weight: 900;
-      line-height: 1;
-      color: var(--navy);
-      letter-spacing: 1px;
-      margin: 0;
+    .seller{
+      margin-top:10px;
+      border-left:4px solid var(--orange);
+      padding-left:10px;
+    }
+    .seller strong{
+      display:block;
+      font-size:18px;
+      font-weight:800;
+      margin-bottom:2px;
+    }
+    .seller span{
+      color:#58719a;
+      font-weight:600;
+      font-size:13px;
     }
 
-    .brand-sub {
-      margin: 4px 0 0;
-      color: var(--orange);
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      font-family: Montserrat, sans-serif;
+    .head-right{
+      text-align:right;
+      min-width:220px;
+    }
+    .doc-title{
+      margin:0;
+      font-family:Montserrat,sans-serif;
+      font-size:28px;
+      line-height:1;
+      font-weight:900;
+    }
+    .doc-number{
+      margin-top:6px;
+      font-family:Montserrat,sans-serif;
+      font-size:38px;
+      color:var(--orange);
+      font-weight:900;
+    }
+    .date-pill{
+      margin-top:8px;
+      background:#f3f8ff;
+      border:1px solid #e2ebf8;
+      border-radius:10px;
+      padding:8px 10px;
+      font-size:13px;
+      font-weight:800;
     }
 
-    .seller-card {
-      margin-top: 14px;
-      border-left: 5px solid var(--orange);
-      padding: 6px 10px;
-      background: #fff;
+    .client{
+      margin-top:14px;
+      border-bottom:1px solid #e7effc;
+      padding-bottom:8px;
+    }
+    .client small{
+      color:#8aa0bf;
+      font-weight:800;
+      letter-spacing:3px;
+      text-transform:uppercase;
+      font-size:11px;
+    }
+    .client-name{
+      margin-top:6px;
+      font-size:22px;
+      font-weight:800;
     }
 
-    .seller-name {
-      font-size: 30px;
-      font-weight: 900;
-      font-family: Montserrat, sans-serif;
-      margin: 0 0 4px;
-      color: var(--navy);
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:12px;
+    }
+    thead th{
+      border:1px solid #2c415f;
+      background:#f3f8ff;
+      font-size:12px;
+      font-weight:800;
+      text-transform:uppercase;
+      padding:8px 6px;
+    }
+    tbody td{
+      border:1px solid #dce6f5;
+      padding:8px 6px;
+      font-size:13px;
+      text-align:center;
+    }
+    td.desc{text-align:left}
+
+    .bottom{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:1fr 250px;
+      gap:12px;
+      align-items:start;
     }
 
-    .seller-meta {
-      font-size: 24px;
-      color: #4f678b;
-      font-weight: 700;
+    .total-words{
+      padding:8px 0;
+      border-top:1px dashed #dce7f8;
+      border-bottom:1px dashed #dce7f8;
+      font-size:13px;
+      font-weight:800;
     }
 
-    .right-head {
-      text-align: right;
-      min-width: 280px;
+    .bank{
+      margin-top:10px;
+      border:1px solid #e2ebfa;
+      border-radius:12px;
+      background:#fbfdff;
+      padding:10px;
+    }
+    .bank h5{
+      margin:0 0 8px;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      font-weight:800;
+    }
+    .bank-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px 12px;
+      font-size:11px;
+      color:#5f789e;
+      font-weight:700;
+    }
+    .bank-grid strong{
+      display:block;
+      font-size:16px;
+      color:#10243f;
+      margin-top:2px;
+      font-weight:800;
     }
 
-    .title-right {
-      margin: 0;
-      font-family: Montserrat, sans-serif;
-      font-style: italic;
-      font-size: 64px;
-      font-weight: 900;
-      color: var(--navy);
-      line-height: .95;
+    .obs{
+      margin-top:10px;
+      font-size:12px;
+      color:#5f789e;
+      font-style:italic;
+      font-weight:600;
     }
 
-    .number-right {
-      margin-top: 10px;
-      font-family: Montserrat, sans-serif;
-      font-size: 76px;
-      font-weight: 900;
-      color: var(--orange);
-      line-height: 1;
+    .sum .row{
+      display:flex;
+      justify-content:space-between;
+      font-size:13px;
+      font-weight:800;
+      padding:6px 0;
+    }
+    .sum .green{ color:var(--green); }
+
+    .saldo{
+      margin-top:6px;
+      background:var(--navy);
+      color:#fff;
+      border-radius:12px;
+      padding:10px;
+    }
+    .saldo small{
+      color:var(--orange);
+      text-transform:uppercase;
+      font-weight:800;
+      font-size:11px;
+    }
+    .saldo .value{
+      text-align:right;
+      font-size:28px;
+      font-weight:900;
+      margin-top:2px;
     }
 
-    .date-pill {
-      margin-top: 12px;
-      background: #f4f8ff;
-      border: 1px solid #e2ebf8;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-weight: 800;
-      color: var(--navy);
-      font-size: 22px;
+    .history-wrap{ padding:14px; }
+    .history-head{
+      display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;
     }
 
-    .client-block {
-      margin-top: 18px;
-      border-bottom: 2px solid #edf3fd;
-      padding-bottom: 8px;
+    .folder{
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+      margin-bottom:10px;
+      background:#fff;
+    }
+    .folder-head{
+      background:#f6faff;
+      padding:10px 12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+    }
+    .folder-title{ font-weight:800; font-size:14px; }
+    .folder-count{ color:var(--muted); font-size:12px; font-weight:700; }
+    .folder-body{ display:none; padding:10px 12px; }
+    .folder.open .folder-body{ display:block; }
+
+    .inv-card{
+      border:1px solid #e6edf8;
+      border-radius:10px;
+      padding:8px;
+      margin-bottom:8px;
+    }
+    .inv-card strong{ font-size:13px; }
+    .inv-meta{ font-size:12px; color:#59739a; margin:4px 0 6px; }
+    .inv-actions{ display:flex; gap:6px; }
+    .inv-actions button{ font-size:12px; padding:8px; }
+
+    .muted{ color:var(--muted); font-size:12px; }
+
+    @media (max-width:1050px){
+      .layout{ grid-template-columns:1fr; }
+      .panel{ position:static; }
+      .top{ grid-template-columns:1fr; }
+      .head-right{ text-align:left; }
+      .bottom{ grid-template-columns:1fr; }
     }
 
-    .client-label {
-      color: #8aa0bf;
-      font-weight: 800;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      font-size: 20px;
-      font-style: italic;
-      margin: 0;
-      font-family: Montserrat, sans-serif;
+    /* Modo impresión: solo factura con su visual */
+    body.printing .tabs,
+    body.printing .panel,
+    body.printing #history{
+      display:none !important;
+    }
+    body.printing #editor{
+      display:block !important;
+    }
+    body.printing .layout{
+      grid-template-columns:1fr !important;
+      gap:0 !important;
+    }
+    body.printing .sheet{
+      border:0 !important;
+      box-shadow:none !important;
+      padding:0 !important;
+    }
+    body.printing .invoice{
+      border:0 !important;
+      border-radius:0 !important;
+      box-shadow:none !important;
     }
 
-    .client-name {
-      margin: 8px 0 0;
-      font-family: Montserrat, sans-serif;
-      font-size: 46px;
-      font-weight: 900;
-      color: var(--navy);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 14px;
-    }
-
-    thead th {
-      border: 2px solid #293e5a;
-      background: #f4f8ff;
-      color: #0f233f;
-      font-size: 20px;
-      font-family: Montserrat, sans-serif;
-      font-weight: 900;
-      text-transform: uppercase;
-      padding: 9px 6px;
-    }
-
-    tbody td {
-      border: 1px solid #d7e2f3;
-      padding: 10px 8px;
-      font-size: 24px;
-      font-weight: 700;
-      color: #173252;
-      text-align: center;
-    }
-
-    td.desc { text-align: left; }
-
-    .bottom {
-      margin-top: 16px;
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 14px;
-      align-items: start;
-    }
-
-    .left-bottom {
-      display: grid;
-      gap: 12px;
-    }
-
-    .total-words {
-      border-top: 2px dashed #dce7f8;
-      border-bottom: 2px dashed #dce7f8;
-      padding: 10px 0;
-      font-family: Montserrat, sans-serif;
-      font-size: 30px;
-      font-weight: 900;
-      color: var(--navy);
-    }
-
-    .bank-card {
-      border: 2px solid #e0ebfb;
-      border-radius: 16px;
-      padding: 12px;
-      background: #fbfdff;
-    }
-
-    .bank-title {
-      margin: 0 0 8px;
-      color: var(--navy);
-      font-family: Montserrat, sans-serif;
-      font-size: 26px;
-      font-weight: 900;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      font-style: italic;
-    }
-
-    .bank-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px 18px;
-      font-size: 18px;
-      font-weight: 800;
-      color: #58729a;
-    }
-
-    .bank-grid strong {
-      display: block;
-      color: #0f233f;
-      font-size: 36px;
-      margin-top: 2px;
-      font-family: Montserrat, sans-serif;
-      font-weight: 900;
-    }
-
-    .obs {
-      margin-top: 8px;
-      border-top: 2px dashed #dce7f8;
-      padding-top: 8px;
-      font-size: 20px;
-      color: #5f789c;
-      font-weight: 700;
-      font-style: italic;
-    }
-
-    .summary {
-      display: grid;
-      gap: 8px;
-    }
-
-    .sum-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 2px;
-      font-size: 34px;
-      font-weight: 900;
-      font-family: Montserrat, sans-serif;
-    }
-
-    .sum-row small {
-      color: #7e97b8;
-      font-size: 28px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-style: italic;
-    }
-
-    .sum-row.green { color: var(--green); }
-
-    .saldo {
-      margin-top: 6px;
-      background: var(--navy);
-      color: #fff;
-      border-radius: 18px;
-      padding: 10px 14px;
-      border-bottom: 4px solid var(--orange);
-    }
-
-    .saldo-title {
-      font-size: 20px;
-      color: var(--orange);
-      font-family: Montserrat, sans-serif;
-      font-weight: 900;
-      text-transform: uppercase;
-      margin: 0;
-    }
-
-    .saldo-value {
-      font-size: 62px;
-      font-family: Montserrat, sans-serif;
-      font-weight: 900;
-      margin: 4px 0 0;
-      text-align: right;
-      line-height: 1;
-    }
-
-    @media (max-width: 1200px) {
-      .app { grid-template-columns: 1fr; }
-      .panel { position: static; }
-      .brand-name { font-size: 38px; }
-      .title-right { font-size: 44px; }
-      .number-right { font-size: 54px; }
-      .client-name { font-size: 32px; }
-      tbody td, thead th { font-size: 16px; }
-      .bottom { grid-template-columns: 1fr; }
-      .sum-row { font-size: 24px; }
-      .sum-row small { font-size: 20px; }
-      .saldo-value { font-size: 42px; }
-      .bank-grid strong { font-size: 22px; }
-    }
-
-    @media print {
-      body { background: #fff; }
-      .app { display: block; max-width: none; margin: 0; padding: 0; }
-      .panel { display: none !important; }
-      .sheet-wrap { border: 0; box-shadow: none; padding: 0; border-radius: 0; }
-      .invoice { border: 0; border-radius: 0; padding: 10px; }
-    }
+    @page { margin: 12mm; }
   </style>
 </head>
 <body>
-  <main class="app">
-    <!-- PANEL DE CONTROL -->
-    <section class="panel">
-      <h2>Editor de cuenta de cobro</h2>
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="editor">Nueva factura</button>
+      <button class="tab-btn" data-tab="history">Historial por cliente</button>
+    </div>
 
-      <div class="section">
-        <p class="section-title">Vendedor (fijo)</p>
-        <label>Nombre
-          <input id="sellerName" value="JHON TEILOR OSORIO ALVAREZ" readonly />
-        </label>
-        <label>Email
-          <input id="sellerEmail" value="Teilorosorio@gmail.com" readonly />
-        </label>
-        <label>Teléfono
-          <input id="sellerPhone" value="3115462451" readonly />
-        </label>
-      </div>
+    <section id="editor" class="tab active">
+      <div class="layout">
+        <aside class="panel">
+          <h3>Editor</h3>
 
-      <div class="section">
-        <p class="section-title">Datos factura</p>
-        <div class="row2">
-          <label>Fecha
-            <input id="invoiceDate" type="date" />
-          </label>
-          <label>Número
-            <input id="invoiceNumber" value="001" />
-          </label>
-        </div>
-        <label>Cliente
-          <input id="clientName" placeholder="Nombre del cliente" />
-        </label>
-      </div>
+          <div class="sec">
+            <p class="sec-title">Vendedor (fijo)</p>
+            <label>Nombre <input value="JHON TEILOR OSORIO ALVAREZ" readonly></label>
+            <label>Email <input value="Teilorosorio@gmail.com" readonly></label>
+            <label>Teléfono <input value="3115462451" readonly></label>
+          </div>
 
-      <div class="section">
-        <p class="section-title">Agregar ítem</p>
-        <label>Descripción
-          <input id="itemDesc" placeholder="Ej: Fabricar cama de 1 metro" />
-        </label>
-        <div class="row2">
-          <label>Cantidad
-            <input id="itemQty" type="number" min="1" value="1" />
-          </label>
-          <label>Valor unidad
-            <input id="itemUnit" type="number" min="0" step="1" placeholder="0" />
-          </label>
-        </div>
-        <button id="addItem" class="btn-blue">Agregar ítem</button>
-      </div>
+          <div class="sec">
+            <p class="sec-title">Datos de factura</p>
+            <div class="row2">
+              <label>Fecha <input id="invoiceDate" type="date"></label>
+              <label>Número <input id="invoiceNumber" value="001"></label>
+            </div>
+            <label>Cliente <input id="clientName" placeholder="Nombre del cliente"></label>
+          </div>
 
-      <div class="section">
-        <p class="section-title">Información bancaria (fija)</p>
-        <label>Banco
-          <input id="payBank" value="CAJA SOCIAL (AHORROS)" readonly />
-        </label>
-        <div class="row2">
-          <label>Número de cuenta
-            <input id="payAccount" value="24055109150" readonly />
-          </label>
-          <label>Cédula titular
-            <input id="payCedula" value="103757035" readonly />
-          </label>
-        </div>
-        <label>Observaciones
-          <textarea id="notes" rows="3" placeholder="Ej: Gracias por su compra"></textarea>
-        </label>
-      </div>
+          <div class="sec">
+            <p class="sec-title">Agregar ítem</p>
+            <label>Descripción <input id="itemDesc" placeholder="Ej: Fabricar cama de 1 metro"></label>
+            <div class="row2">
+              <label>Cantidad <input id="itemQty" type="number" min="1" value="1"></label>
+              <label>Valor unidad <input id="itemUnit" type="number" min="0" step="1"></label>
+            </div>
+            <button id="addItem">Agregar ítem</button>
+          </div>
 
-      <div class="btns">
-        <button id="saveLocal">Guardar</button>
-        <button id="newInvoice">Nueva factura</button>
-        <button id="exportPdf" class="btn-orange">Descargar PDF (solo factura)</button>
-        <button id="clearItems" class="btn-danger">Vaciar ítems</button>
-      </div>
-    </section>
+          <div class="sec">
+            <p class="sec-title">Información bancaria (fija)</p>
+            <label>Banco <input value="CAJA SOCIAL (AHORROS)" readonly></label>
+            <div class="row2">
+              <label>N° cuenta <input value="24055109150" readonly></label>
+              <label>Cédula titular <input value="103757035" readonly></label>
+            </div>
+            <label>Observaciones <textarea id="notes" rows="3"></textarea></label>
+          </div>
 
-    <!-- FACTURA -->
-    <section class="sheet-wrap">
-      <article id="invoice" class="invoice">
-        <div class="top">
-          <div>
-            <div class="brand-line">
-              <div class="logo-box">T/A</div>
+          <div class="btns">
+            <button id="saveInvoice">Guardar factura</button>
+            <button id="newInvoice">Nueva factura</button>
+            <button id="pdfInvoice" class="btn-orange">Descargar PDF (con diseño)</button>
+            <button id="clearItems" class="btn-danger">Vaciar ítems</button>
+          </div>
+        </aside>
+
+        <section class="sheet">
+          <article id="invoiceDoc" class="invoice">
+            <div class="top">
               <div>
-                <h1 class="brand-name">TE AMOBLAMOS</h1>
-                <p class="brand-sub">MOBILIARIO & ESTYLO</p>
+                <div class="brand">
+                  <div class="logo">TA</div>
+                  <div>
+                    <h1 class="brand-name">TE AMOBLAMOS</h1>
+                    <p class="brand-sub">MOBILIARIO & ESTILO</p>
+                  </div>
+                </div>
+                <div class="seller">
+                  <strong>JHON TEILOR OSORIO ALVAREZ</strong>
+                  <span>Teilorosorio@gmail.com | 3115462451</span>
+                </div>
+              </div>
+              <div class="head-right">
+                <h2 class="doc-title">CUENTA DE<br>COBRO</h2>
+                <div class="doc-number">#<span id="vNumber">001</span></div>
+                <div class="date-pill">FECHA: <span id="vDate">----</span></div>
               </div>
             </div>
 
-            <div class="seller-card">
-              <p class="seller-name" id="vSeller">JHON TEILOR OSORIO ALVAREZ</p>
-              <p class="seller-meta"><span id="vEmail">Teilorosorio@gmail.com</span> | <span id="vPhone">3115462451</span></p>
+            <div class="client">
+              <small>CLIENTE</small>
+              <div class="client-name" id="vClient">---</div>
             </div>
-          </div>
 
-          <div class="right-head">
-            <h2 class="title-right">CUENTA DE<br>COBRO</h2>
-            <div class="number-right">#<span id="vNumber">001</span></div>
-            <div class="date-pill">FECHA: <span id="vDate">----</span></div>
-          </div>
-        </div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:12%">CANT.</th>
+                  <th style="width:43%">DESCRIPCIÓN</th>
+                  <th style="width:22%">VALOR UNIDAD</th>
+                  <th style="width:23%">TOTAL</th>
+                </tr>
+              </thead>
+              <tbody id="itemsBody"></tbody>
+            </table>
 
-        <div class="client-block">
-          <p class="client-label">CLIENTE:</p>
-          <p class="client-name" id="vClient">---</p>
-        </div>
+            <div class="bottom">
+              <div>
+                <div class="total-words">TOTAL EN LETRAS: <span id="totalWords">---</span></div>
 
-        <table>
-          <thead>
-            <tr>
-              <th style="width:12%">CANT.</th>
-              <th style="width:38%">DESCRIPCIÓN DETALLADA</th>
-              <th style="width:25%">VALOR UNIDAD</th>
-              <th style="width:25%">TOTAL</th>
-            </tr>
-          </thead>
-          <tbody id="itemsBody"></tbody>
-        </table>
-
-        <div class="bottom">
-          <div class="left-bottom">
-            <div class="total-words">TOTAL EN LETRAS: <span id="totalWords">---</span></div>
-
-            <div class="bank-card">
-              <h3 class="bank-title">Información bancaria</h3>
-              <div class="bank-grid">
-                <div>
-                  CAJA SOCIAL<br>(AHORROS):
-                  <strong id="vBankAccount">24055109150</strong>
+                <div class="bank">
+                  <h5>Información bancaria</h5>
+                  <div class="bank-grid">
+                    <div>CAJA SOCIAL (AHORROS)<strong>24055109150</strong></div>
+                    <div>CÉDULA TITULAR<strong>103757035</strong></div>
+                  </div>
                 </div>
-                <div>
-                  CÉDULA TITULAR:
-                  <strong id="vBankCedula">103757035</strong>
+
+                <div class="obs">OBSERVACIONES: <span id="vNotes">-</span></div>
+              </div>
+
+              <div class="sum">
+                <div class="row"><span>SUBTOTAL</span><span>$<span id="subTotal">0</span></span></div>
+                <div class="row green"><span>ABONO</span><span>$<span id="abono">0</span></span></div>
+                <div class="saldo">
+                  <small>SALDO RESTANTE</small>
+                  <div class="value">$<span id="saldo">0</span></div>
                 </div>
               </div>
             </div>
-
-            <div class="obs">OBSERVACIONES: <span id="vNotes">-</span></div>
-          </div>
-
-          <div class="summary">
-            <div class="sum-row">
-              <small>SUBTOTAL</small>
-              <span>$<span id="subTotal">0</span></span>
-            </div>
-            <div class="sum-row green">
-              <small>ABONO</small>
-              <span>$<span id="abono">0</span></span>
-            </div>
-            <div class="saldo">
-              <p class="saldo-title">SALDO RESTANTE</p>
-              <p class="saldo-value">$<span id="saldo">0</span></p>
-            </div>
-          </div>
-        </div>
-      </article>
+          </article>
+        </section>
+      </div>
     </section>
-  </main>
+
+    <section id="history" class="tab">
+      <div class="history-wrap">
+        <div class="history-head">
+          <h3 style="margin:0">Historial por cliente</h3>
+          <span class="muted">Se guarda en este navegador</span>
+        </div>
+        <div id="historyFolders"></div>
+      </div>
+    </section>
+  </div>
 
   <script>
-    const STORAGE_KEY = "te_amoblamos_style_premium_v1";
+    const STORAGE_KEY = "te_amoblamos_historial_v2";
     const items = [];
 
     const $ = (id) => document.getElementById(id);
-
     const dom = {
-      sellerName: $("sellerName"),
-      sellerEmail: $("sellerEmail"),
-      sellerPhone: $("sellerPhone"),
       invoiceDate: $("invoiceDate"),
       invoiceNumber: $("invoiceNumber"),
       clientName: $("clientName"),
       itemDesc: $("itemDesc"),
       itemQty: $("itemQty"),
       itemUnit: $("itemUnit"),
-      payBank: $("payBank"),
-      payAccount: $("payAccount"),
-      payCedula: $("payCedula"),
       notes: $("notes"),
       addItem: $("addItem"),
-      saveLocal: $("saveLocal"),
+      saveInvoice: $("saveInvoice"),
       newInvoice: $("newInvoice"),
-      exportPdf: $("exportPdf"),
+      pdfInvoice: $("pdfInvoice"),
       clearItems: $("clearItems"),
       itemsBody: $("itemsBody"),
-      // vista
-      vSeller: $("vSeller"),
-      vEmail: $("vEmail"),
-      vPhone: $("vPhone"),
       vNumber: $("vNumber"),
       vDate: $("vDate"),
       vClient: $("vClient"),
       totalWords: $("totalWords"),
-      vBankAccount: $("vBankAccount"),
-      vBankCedula: $("vBankCedula"),
       vNotes: $("vNotes"),
       subTotal: $("subTotal"),
       abono: $("abono"),
       saldo: $("saldo"),
-      invoice: $("invoice")
+      historyFolders: $("historyFolders")
     };
 
-    function money(n) {
-      return new Intl.NumberFormat("es-CO").format(Math.round(Number(n) || 0));
+    function money(n){ return new Intl.NumberFormat("es-CO").format(Math.round(Number(n)||0)); }
+
+    function toWordsES(num){
+      num = Math.floor(Number(num)||0);
+      if(num===0) return "cero pesos";
+      const u=["","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve"];
+      const d10=["diez","once","doce","trece","catorce","quince","dieciseis","diecisiete","dieciocho","diecinueve"];
+      const d=["","","veinte","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa"];
+      const c=["","ciento","doscientos","trescientos","cuatrocientos","quinientos","seiscientos","setecientos","ochocientos","novecientos"];
+      function two(n){ if(n<10)return u[n]; if(n<20)return d10[n-10]; if(n<30)return n===20?"veinte":"veinti"+u[n-20]; const de=Math.floor(n/10),un=n%10; return d[de]+(un?" y "+u[un]:"");}
+      function three(n){ if(n===0)return ""; if(n===100)return "cien"; const ce=Math.floor(n/100),re=n%100; return (ce?c[ce]:"")+(ce&&re?" ":"")+two(re); }
+      function section(n,s,p){ if(n===0)return ""; if(n===1)return s; return three(n)+" "+p; }
+      const m=Math.floor(num/1000000), k=Math.floor((num%1000000)/1000), r=num%1000;
+      let t=""; if(m)t+=section(m,"un millon","millones"); if(k)t+=(t?" ":"")+(k===1?"mil":three(k)+" mil"); if(r)t+=(t?" ":"")+three(r);
+      return t.trim()+" pesos";
     }
 
-    function toWordsES(num) {
-      num = Math.floor(Number(num) || 0);
-      if (num === 0) return "cero pesos";
+    function subtotal(){ return items.reduce((a,it)=>a+it.qty*it.unit,0); }
 
-      const u = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
-      const d10 = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciseis", "diecisiete", "dieciocho", "diecinueve"];
-      const d = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
-      const c = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
+    function renderInvoice(){
+      dom.vNumber.textContent = dom.invoiceNumber.value || "001";
+      dom.vDate.textContent = dom.invoiceDate.value || "----";
+      dom.vClient.textContent = dom.clientName.value || "---";
+      dom.vNotes.textContent = dom.notes.value || "-";
 
-      function two(n) {
-        if (n < 10) return u[n];
-        if (n < 20) return d10[n - 10];
-        if (n < 30) return n === 20 ? "veinte" : "veinti" + u[n - 20];
-        const dec = Math.floor(n / 10), uni = n % 10;
-        return d[dec] + (uni ? " y " + u[uni] : "");
-      }
-
-      function three(n) {
-        if (n === 0) return "";
-        if (n === 100) return "cien";
-        const cen = Math.floor(n / 100), rest = n % 100;
-        return (cen ? c[cen] : "") + (cen && rest ? " " : "") + two(rest);
-      }
-
-      function section(n, singular, plural) {
-        if (n === 0) return "";
-        if (n === 1) return singular;
-        return three(n) + " " + plural;
-      }
-
-      const millones = Math.floor(num / 1000000);
-      const miles = Math.floor((num % 1000000) / 1000);
-      const cientos = num % 1000;
-
-      let text = "";
-      if (millones) text += section(millones, "un millon", "millones");
-      if (miles) text += (text ? " " : "") + (miles === 1 ? "mil" : three(miles) + " mil");
-      if (cientos) text += (text ? " " : "") + three(cientos);
-
-      return text.trim() + " pesos";
-    }
-
-    function subtotal() {
-      return items.reduce((acc, it) => acc + (it.qty * it.unit), 0);
-    }
-
-    function renderItems() {
       dom.itemsBody.innerHTML = "";
-      if (!items.length) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = "<td>-</td><td class='desc'>Sin productos</td><td>-</td><td>-</td>";
+      if(!items.length){
+        const tr=document.createElement("tr");
+        tr.innerHTML="<td>-</td><td class='desc'>Sin productos</td><td>-</td><td>-</td>";
         dom.itemsBody.appendChild(tr);
       } else {
-        items.forEach((it, idx) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${it.qty}</td>
-            <td class="desc">${it.desc}</td>
-            <td>${money(it.unit)}</td>
-            <td>${money(it.qty * it.unit)}</td>
-          `;
-          tr.title = "Doble clic para eliminar";
-          tr.ondblclick = () => {
-            items.splice(idx, 1);
-            renderAll();
-          };
+        items.forEach((it, idx)=>{
+          const tr=document.createElement("tr");
+          tr.innerHTML=`<td>${it.qty}</td><td class="desc">${it.desc}</td><td>${money(it.unit)}</td><td>${money(it.qty*it.unit)}</td>`;
+          tr.title="Doble clic para eliminar";
+          tr.ondblclick=()=>{ items.splice(idx,1); renderInvoice(); };
           dom.itemsBody.appendChild(tr);
         });
       }
 
-      const sub = subtotal();
-      const abono = 0;
-      const saldo = sub - abono;
-
-      dom.subTotal.textContent = money(sub);
-      dom.abono.textContent = money(abono);
-      dom.saldo.textContent = money(saldo);
-      dom.totalWords.textContent = toWordsES(saldo);
+      const sub=subtotal(), ab=0, sa=sub;
+      dom.subTotal.textContent=money(sub);
+      dom.abono.textContent=money(ab);
+      dom.saldo.textContent=money(sa);
+      dom.totalWords.textContent=toWordsES(sa);
     }
 
-    function renderHeader() {
-      dom.vSeller.textContent = dom.sellerName.value;
-      dom.vEmail.textContent = dom.sellerEmail.value;
-      dom.vPhone.textContent = dom.sellerPhone.value;
-      dom.vNumber.textContent = dom.invoiceNumber.value || "001";
-      dom.vDate.textContent = dom.invoiceDate.value || "----";
-      dom.vClient.textContent = dom.clientName.value || "---";
-      dom.vBankAccount.textContent = "24055109150";
-      dom.vBankCedula.textContent = "103757035";
-      dom.vNotes.textContent = dom.notes.value || "-";
-    }
-
-    function renderAll() {
-      renderHeader();
-      renderItems();
-    }
-
-    function resetForm() {
-      const today = new Date().toISOString().slice(0, 10);
-      dom.invoiceDate.value = today;
-      dom.invoiceNumber.value = "001";
+    function newInvoice(){
+      dom.invoiceDate.value = new Date().toISOString().slice(0,10);
+      dom.invoiceNumber.value = String(Date.now()).slice(-3);
       dom.clientName.value = "";
       dom.itemDesc.value = "";
       dom.itemQty.value = 1;
       dom.itemUnit.value = "";
-      dom.payBank.value = "CAJA SOCIAL (AHORROS)";
-      dom.payAccount.value = "24055109150";
-      dom.payCedula.value = "103757035";
       dom.notes.value = "";
       items.length = 0;
-      renderAll();
+      renderInvoice();
     }
 
-    function saveLocal() {
-      if (!dom.clientName.value.trim()) return alert("Ingresa el nombre del cliente.");
-      if (!items.length) return alert("Agrega al menos un ítem.");
-      const data = {
-        invoiceDate: dom.invoiceDate.value,
-        invoiceNumber: dom.invoiceNumber.value,
-        clientName: dom.clientName.value,
-        notes: dom.notes.value,
-        items: items.slice(),
-        total: subtotal()
+    function readStorage(){ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+    function writeStorage(v){ localStorage.setItem(STORAGE_KEY, JSON.stringify(v)); }
+
+    function saveInvoice(){
+      const client = dom.clientName.value.trim();
+      if(!client) return alert("Escribe el cliente.");
+      if(!items.length) return alert("Agrega al menos un item.");
+
+      const inv = {
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        number: dom.invoiceNumber.value.trim() || String(Date.now()).slice(-3),
+        date: dom.invoiceDate.value,
+        client,
+        notes: dom.notes.value.trim(),
+        items: items.map(x=>({...x})),
+        subtotal: subtotal(),
+        saldo: subtotal()
       };
-      const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      const idx = all.findIndex(x => x.invoiceNumber === data.invoiceNumber && data.invoiceNumber);
-      if (idx >= 0) all[idx] = data; else all.push(data);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+
+      const all = readStorage();
+      all.push(inv);
+      writeStorage(all);
+      renderHistory();
       alert("Factura guardada.");
     }
 
-    dom.addItem.addEventListener("click", () => {
+    function loadInvoice(inv){
+      dom.invoiceDate.value = inv.date || "";
+      dom.invoiceNumber.value = inv.number || "";
+      dom.clientName.value = inv.client || "";
+      dom.notes.value = inv.notes || "";
+      items.length = 0;
+      (inv.items || []).forEach(i=>items.push({desc:i.desc, qty:Number(i.qty), unit:Number(i.unit)}));
+      renderInvoice();
+      switchTab("editor");
+    }
+
+    function deleteInvoice(id){
+      if(!confirm("¿Eliminar factura?")) return;
+      writeStorage(readStorage().filter(x=>x.id!==id));
+      renderHistory();
+    }
+
+    function renderHistory(){
+      const all = readStorage();
+      dom.historyFolders.innerHTML = "";
+      if(!all.length){
+        dom.historyFolders.innerHTML = `<p class="muted">Aún no tienes facturas guardadas.</p>`;
+        return;
+      }
+
+      const grouped = {};
+      all.forEach(inv=>{
+        const key = inv.client?.trim() || "Sin cliente";
+        if(!grouped[key]) grouped[key] = [];
+        grouped[key].push(inv);
+      });
+
+      Object.keys(grouped).sort().forEach(client=>{
+        const folder = document.createElement("div");
+        folder.className = "folder";
+
+        const head = document.createElement("div");
+        head.className = "folder-head";
+        head.innerHTML = `<div class="folder-title">📁 ${client}</div><div class="folder-count">${grouped[client].length} factura(s)</div>`;
+        head.onclick = ()=> folder.classList.toggle("open");
+
+        const body = document.createElement("div");
+        body.className = "folder-body";
+
+        grouped[client]
+          .sort((a,b)=>(b.date||"").localeCompare(a.date||""))
+          .forEach(inv=>{
+            const card = document.createElement("div");
+            card.className = "inv-card";
+            card.innerHTML = `
+              <strong>#${inv.number}</strong>
+              <div class="inv-meta">Fecha: ${inv.date || "-"} | Total: $${money(inv.saldo || 0)}</div>
+            `;
+            const actions = document.createElement("div");
+            actions.className = "inv-actions";
+
+            const b1 = document.createElement("button");
+            b1.textContent = "Cargar";
+            b1.style.background = "#2c5fa9";
+            b1.onclick = ()=> loadInvoice(inv);
+
+            const b2 = document.createElement("button");
+            b2.textContent = "Eliminar";
+            b2.style.background = "var(--danger)";
+            b2.onclick = ()=> deleteInvoice(inv.id);
+
+            actions.appendChild(b1);
+            actions.appendChild(b2);
+            card.appendChild(actions);
+            body.appendChild(card);
+          });
+
+        folder.appendChild(head);
+        folder.appendChild(body);
+        dom.historyFolders.appendChild(folder);
+      });
+    }
+
+    function addItem(){
       const desc = dom.itemDesc.value.trim();
       const qty = Number(dom.itemQty.value);
       const unit = Number(dom.itemUnit.value);
 
-      if (!desc) return alert("Escribe la descripción.");
-      if (!(qty > 0)) return alert("Cantidad inválida.");
-      if (!(unit >= 0)) return alert("Valor unidad inválido.");
+      if(!desc) return alert("Escribe la descripción.");
+      if(!(qty>0)) return alert("Cantidad inválida.");
+      if(!(unit>=0)) return alert("Valor inválido.");
 
-      items.push({ desc, qty, unit });
+      items.push({desc, qty, unit});
       dom.itemDesc.value = "";
       dom.itemQty.value = 1;
       dom.itemUnit.value = "";
-      renderAll();
-    });
+      renderInvoice();
+    }
 
-    dom.clearItems.addEventListener("click", () => {
-      if (!confirm("¿Vaciar todos los ítems?")) return;
+    function clearItems(){
+      if(!confirm("¿Vaciar items?")) return;
       items.length = 0;
-      renderAll();
+      renderInvoice();
+    }
+
+    // PDF con diseño completo (imprime esta misma página)
+    function exportPdf(){
+      document.body.classList.add("printing");
+      window.print();
+    }
+
+    window.addEventListener("afterprint", ()=> {
+      document.body.classList.remove("printing");
     });
 
-    dom.saveLocal.addEventListener("click", saveLocal);
-    dom.newInvoice.addEventListener("click", resetForm);
+    function switchTab(id){
+      document.querySelectorAll(".tab-btn").forEach(b=> b.classList.toggle("active", b.dataset.tab===id));
+      document.querySelectorAll(".tab").forEach(t=> t.classList.toggle("active", t.id===id));
+      if(id==="history") renderHistory();
+    }
 
-    ["invoiceDate", "invoiceNumber", "clientName", "notes"].forEach((id) => {
-      $(id).addEventListener("input", renderHeader);
+    // events
+    dom.addItem.onclick = addItem;
+    dom.clearItems.onclick = clearItems;
+    dom.saveInvoice.onclick = saveInvoice;
+    dom.newInvoice.onclick = newInvoice;
+    dom.pdfInvoice.onclick = exportPdf;
+
+    ["invoiceDate","invoiceNumber","clientName","notes"].forEach(id => $(id).addEventListener("input", renderInvoice));
+
+    document.querySelectorAll(".tab-btn").forEach(btn=>{
+      btn.onclick = ()=> switchTab(btn.dataset.tab);
     });
 
-    // Exportar solo factura
-    dom.exportPdf.addEventListener("click", () => {
-      const html = dom.invoice.outerHTML;
-      const w = window.open("", "_blank", "width=1300,height=900");
-      w.document.write(`
-        <!doctype html>
-        <html lang="es">
-        <head>
-          <meta charset="UTF-8" />
-          <title>Factura PDF</title>
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-          <style>
-            body { margin: 0; font-family: Inter, Arial, sans-serif; color: #0f2340; }
-            .invoice { padding: 10px; }
-          </style>
-        </head>
-        <body>
-          ${html}
-          <script>
-            window.onload = function() {
-              window.print();
-              window.onafterprint = function(){ window.close(); };
-            };
-          <\/script>
-        </body>
-        </html>
-      `);
-      w.document.close();
-    });
-
-    resetForm();
+    newInvoice();
+    renderHistory();
   </script>
 </body>
 </html>
