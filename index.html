@@ -20,7 +20,7 @@
     .tab-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
     .tab{display:none}
     .tab.active{display:block}
-    .layout{display:grid;grid-template-columns:340px 1fr;gap:14px}
+    .layout{display:grid;grid-template-columns:360px 1fr;gap:14px}
     .panel,.sheet,.history-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 8px 24px rgba(19,39,67,.08)}
     .panel{padding:14px;position:sticky;top:10px;height:fit-content}
     .panel h3{margin:0 0 10px;font-size:18px;font-weight:800}
@@ -34,14 +34,12 @@
     button{border:0;color:#fff;background:var(--navy);font-weight:800;cursor:pointer}
     .btn-orange{background:var(--orange);color:#132743}
     .btn-danger{background:var(--danger)}
+    .btn-small{width:auto;padding:6px 8px;font-size:12px;border-radius:8px;background:var(--danger)}
     .sheet{padding:14px}
     .invoice{border:1px solid #e6edf8;border-radius:12px;background:#fff;padding:16px;min-height:720px}
     .top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
     .brand{display:flex;align-items:center;gap:12px}
-    .logo{
-      width:70px;height:70px;border-radius:14px;overflow:hidden;background:#132743;
-      display:flex;align-items:center;justify-content:center;border:1px solid #1f3556;
-    }
+    .logo{width:70px;height:70px;border-radius:14px;overflow:hidden;background:#132743;display:flex;align-items:center;justify-content:center;border:1px solid #1f3556}
     .logo-img{width:100%;height:100%;object-fit:cover}
     .brand-name{margin:0;font-family:Montserrat,sans-serif;font-weight:900;font-size:34px;line-height:1;letter-spacing:.5px}
     .brand-sub{margin:4px 0 0;color:var(--orange);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
@@ -59,9 +57,18 @@
     thead th{border:1px solid #2c415f;background:#f3f8ff;font-size:12px;font-weight:800;text-transform:uppercase;padding:8px 6px}
     tbody td{border:1px solid #dce6f5;padding:8px 6px;font-size:13px;text-align:center}
     td.desc{text-align:left}
-    .item-del-btn{
-      background:#c12f2f;color:#fff;border:0;border-radius:8px;padding:6px 8px;font-size:12px;font-weight:700;cursor:pointer
+
+    .editor-items{
+      border:1px solid #e2ebfa;background:#fbfdff;border-radius:10px;padding:8px;max-height:180px;overflow:auto
     }
+    .editor-item{
+      display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
+      border-bottom:1px dashed #d9e5f7;padding:6px 0;font-size:12px
+    }
+    .editor-item:last-child{border-bottom:0}
+    .editor-item .meta{color:#5b759d;font-size:11px}
+    .editor-empty{font-size:12px;color:#6f86a8}
+
     .bottom{margin-top:12px;display:grid;grid-template-columns:1fr 250px;gap:12px;align-items:start}
     .total-words{padding:8px 0;border-top:1px dashed #dce7f8;border-bottom:1px dashed #dce7f8;font-size:13px;font-weight:800}
     .bank{margin-top:10px;border:1px solid #e2ebfa;border-radius:12px;background:#fbfdff;padding:10px}
@@ -141,6 +148,16 @@
               <label>Valor unidad <input id="itemUnit" type="number" min="0" step="1"></label>
             </div>
             <button id="addItem">Agregar ítem</button>
+
+            <label style="margin-top:10px;">Ítems cargados (editar aquí)</label>
+            <div id="editorItemsList" class="editor-items"></div>
+          </div>
+
+          <div class="sec">
+            <p class="sec-title">Cobro</p>
+            <label>Abono
+              <input id="abonoInput" type="number" min="0" step="1" value="0" placeholder="0">
+            </label>
           </div>
 
           <div class="sec">
@@ -194,11 +211,10 @@
             <table>
               <thead>
                 <tr>
-                  <th style="width:10%">CANT.</th>
-                  <th style="width:38%">DESCRIPCIÓN</th>
-                  <th style="width:18%">VALOR UNIDAD</th>
-                  <th style="width:20%">TOTAL</th>
-                  <th style="width:14%">ACCIÓN</th>
+                  <th style="width:12%">CANT.</th>
+                  <th style="width:45%">DESCRIPCIÓN</th>
+                  <th style="width:21%">VALOR UNIDAD</th>
+                  <th style="width:22%">TOTAL</th>
                 </tr>
               </thead>
               <tbody id="itemsBody"></tbody>
@@ -245,7 +261,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "te_amoblamos_historial_v3";
+    const STORAGE_KEY = "te_amoblamos_historial_v4";
     const INVOICE_COUNTER_KEY = "te_amoblamos_invoice_counter_v1";
     const INVOICE_START = 20514;
     const items = [];
@@ -258,6 +274,7 @@
       itemDesc: $("itemDesc"),
       itemQty: $("itemQty"),
       itemUnit: $("itemUnit"),
+      abonoInput: $("abonoInput"),
       notes: $("notes"),
       addItem: $("addItem"),
       saveInvoice: $("saveInvoice"),
@@ -265,6 +282,7 @@
       pdfInvoice: $("pdfInvoice"),
       clearItems: $("clearItems"),
       itemsBody: $("itemsBody"),
+      editorItemsList: $("editorItemsList"),
       vNumber: $("vNumber"),
       vDate: $("vDate"),
       vClient: $("vClient"),
@@ -307,6 +325,33 @@
 
     function subtotal(){ return items.reduce((a,it)=>a+it.qty*it.unit,0); }
 
+    function getAbonoCapped(sub) {
+      const raw = Number(dom.abonoInput.value) || 0;
+      if (raw < 0) return 0;
+      return raw > sub ? sub : raw;
+    }
+
+    function renderEditorItems() {
+      dom.editorItemsList.innerHTML = "";
+      if (!items.length) {
+        dom.editorItemsList.innerHTML = `<div class="editor-empty">No hay ítems cargados.</div>`;
+        return;
+      }
+
+      items.forEach((it, idx) => {
+        const row = document.createElement("div");
+        row.className = "editor-item";
+        row.innerHTML = `
+          <div>
+            <strong>${it.desc}</strong>
+            <div class="meta">${it.qty} x $${money(it.unit)} = $${money(it.qty * it.unit)}</div>
+          </div>
+          <button type="button" class="btn-small" data-remove-idx="${idx}">Eliminar</button>
+        `;
+        dom.editorItemsList.appendChild(row);
+      });
+    }
+
     function renderInvoice(){
       dom.vNumber.textContent = dom.invoiceNumber.value || String(INVOICE_START);
       dom.vDate.textContent = dom.invoiceDate.value || "----";
@@ -316,27 +361,33 @@
       dom.itemsBody.innerHTML = "";
       if(!items.length){
         const tr=document.createElement("tr");
-        tr.innerHTML="<td>-</td><td class='desc'>Sin productos</td><td>-</td><td>-</td><td>-</td>";
+        tr.innerHTML="<td>-</td><td class='desc'>Sin productos</td><td>-</td><td>-</td>";
         dom.itemsBody.appendChild(tr);
       } else {
-        items.forEach((it, idx)=>{
+        items.forEach((it)=>{
           const tr=document.createElement("tr");
           tr.innerHTML = `
             <td>${it.qty}</td>
             <td class="desc">${it.desc}</td>
             <td>${money(it.unit)}</td>
             <td>${money(it.qty*it.unit)}</td>
-            <td><button type="button" class="item-del-btn" data-idx="${idx}">Eliminar</button></td>
           `;
           dom.itemsBody.appendChild(tr);
         });
       }
 
-      const sub=subtotal(), ab=0, sa=sub;
-      dom.subTotal.textContent=money(sub);
-      dom.abono.textContent=money(ab);
-      dom.saldo.textContent=money(sa);
-      dom.totalWords.textContent=toWordsES(sa);
+      const sub = subtotal();
+      const ab = getAbonoCapped(sub);
+      const sa = sub - ab;
+
+      if ((Number(dom.abonoInput.value) || 0) !== ab) dom.abonoInput.value = String(ab);
+
+      dom.subTotal.textContent = money(sub);
+      dom.abono.textContent = money(ab);
+      dom.saldo.textContent = money(sa);
+      dom.totalWords.textContent = toWordsES(sa);
+
+      renderEditorItems();
     }
 
     function newInvoice(){
@@ -346,6 +397,7 @@
       dom.itemDesc.value = "";
       dom.itemQty.value = 1;
       dom.itemUnit.value = "";
+      dom.abonoInput.value = "0";
       dom.notes.value = "";
       items.length = 0;
       renderInvoice();
@@ -359,15 +411,20 @@
       if(!client) return alert("Escribe el cliente.");
       if(!items.length) return alert("Agrega al menos un item.");
 
+      const sub = subtotal();
+      const ab = getAbonoCapped(sub);
+      const sa = sub - ab;
+
       const inv = {
         id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
         number: dom.invoiceNumber.value.trim() || String(INVOICE_START),
         date: dom.invoiceDate.value,
         client,
         notes: dom.notes.value.trim(),
+        abono: ab,
         items: items.map(x=>({...x})),
-        subtotal: subtotal(),
-        saldo: subtotal()
+        subtotal: sub,
+        saldo: sa
       };
 
       const all = readStorage();
@@ -382,8 +439,11 @@
       dom.invoiceNumber.value = inv.number || String(INVOICE_START);
       dom.clientName.value = inv.client || "";
       dom.notes.value = inv.notes || "";
+      dom.abonoInput.value = String(inv.abono || 0);
+
       items.length = 0;
       (inv.items || []).forEach(i=>items.push({desc:i.desc, qty:Number(i.qty), unit:Number(i.unit)}));
+
       renderInvoice();
       switchTab("editor");
     }
@@ -428,7 +488,7 @@
             card.className = "inv-card";
             card.innerHTML = `
               <strong>#${inv.number}</strong>
-              <div class="inv-meta">Fecha: ${inv.date || "-"} | Total: $${money(inv.saldo || 0)}</div>
+              <div class="inv-meta">Fecha: ${inv.date || "-"} | Subtotal: $${money(inv.subtotal || 0)} | Abono: $${money(inv.abono || 0)} | Saldo: $${money(inv.saldo || 0)}</div>
             `;
             const actions = document.createElement("div");
             actions.className = "inv-actions";
@@ -497,16 +557,16 @@
     dom.newInvoice.onclick = newInvoice;
     dom.pdfInvoice.onclick = exportPdf;
 
-    dom.itemsBody.addEventListener("click", (e) => {
-      const btn = e.target.closest(".item-del-btn");
+    dom.editorItemsList.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-remove-idx]");
       if (!btn) return;
-      const idx = Number(btn.dataset.idx);
+      const idx = Number(btn.dataset.removeIdx);
       if (!Number.isInteger(idx)) return;
       items.splice(idx, 1);
       renderInvoice();
     });
 
-    ["invoiceDate","clientName","notes"].forEach(id => $(id).addEventListener("input", renderInvoice));
+    ["invoiceDate","clientName","notes","abonoInput"].forEach(id => $(id).addEventListener("input", renderInvoice));
 
     document.querySelectorAll(".tab-btn").forEach(btn=>{
       btn.onclick = ()=> switchTab(btn.dataset.tab);
