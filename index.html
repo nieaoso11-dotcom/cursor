@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>te_amoblamos | Cuenta de cobro</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
   <style>
     :root{
       --bg:#edf3fb; --card:#fff; --line:#dbe6f5; --text:#10243f; --muted:#6f86a8;
@@ -35,22 +35,20 @@
     .btn-orange{background:var(--orange);color:#132743}
     .btn-danger{background:var(--danger)}
     .btn-small{width:auto;padding:6px 8px;font-size:12px;border-radius:8px;background:var(--danger)}
+
     .sheet{padding:14px}
     .invoice{border:1px solid #e6edf8;border-radius:12px;background:#fff;padding:16px;min-height:720px}
     .top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
     .brand{display:flex;align-items:center;gap:12px}
-
     .logo{
       width:70px;height:70px;border-radius:14px;overflow:hidden;background:#132743;
-      display:flex;align-items:center;justify-content:center;border:1px solid #1f3556;
-      position: relative;
+      display:flex;align-items:center;justify-content:center;border:1px solid #1f3556;position:relative;
     }
     .logo-img{width:100%;height:100%;object-fit:cover;display:block}
     .logo-fallback{
       position:absolute;inset:0;display:none;align-items:center;justify-content:center;
       color:#f4a62a;font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;
     }
-
     .brand-name{margin:0;font-family:Montserrat,sans-serif;font-weight:900;font-size:34px;line-height:1;letter-spacing:.5px}
     .brand-sub{margin:4px 0 0;color:var(--orange);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
     .seller{margin-top:10px;border-left:4px solid var(--orange);padding-left:10px}
@@ -63,6 +61,7 @@
     .client{margin-top:14px;border-bottom:1px solid #e7effc;padding-bottom:8px}
     .client small{color:#8aa0bf;font-weight:800;letter-spacing:3px;text-transform:uppercase;font-size:11px}
     .client-name{margin-top:6px;font-size:22px;font-weight:800}
+
     table{width:100%;border-collapse:collapse;margin-top:12px}
     thead th{border:1px solid #2c415f;background:#f3f8ff;font-size:12px;font-weight:800;text-transform:uppercase;padding:8px 6px}
     tbody td{border:1px solid #dce6f5;padding:8px 6px;font-size:13px;text-align:center}
@@ -91,16 +90,9 @@
     .saldo{margin-top:6px;background:var(--navy);color:#fff;border-radius:12px;padding:10px}
     .saldo small{color:var(--orange);text-transform:uppercase;font-weight:800;font-size:11px}
     .saldo .value{text-align:right;font-size:28px;font-weight:900;margin-top:2px}
-
     .closing-phrase{
-      margin-top:14px;
-      padding-top:10px;
-      border-top:1px dashed #dce7f8;
-      text-align:center;
-      font-size:12px;
-      font-weight:700;
-      color:#4f688d;
-      letter-spacing:.2px;
+      margin-top:14px;padding-top:10px;border-top:1px dashed #dce7f8;text-align:center;
+      font-size:12px;font-weight:700;color:#4f688d;letter-spacing:.2px;
     }
 
     .history-wrap{padding:14px}
@@ -126,12 +118,36 @@
       .bottom{grid-template-columns:1fr}
     }
 
+    /* vista normal durante impresión (oculta panel y tabs) */
     body.printing .tabs, body.printing .panel, body.printing #history{display:none !important}
     body.printing #editor{display:block !important}
     body.printing .layout{grid-template-columns:1fr !important;gap:0 !important}
     body.printing .sheet{border:0 !important;box-shadow:none !important;padding:0 !important}
     body.printing .invoice{border:0 !important;border-radius:0 !important;box-shadow:none !important}
-    @page { margin: 12mm; }
+
+    /* ajustes compactos para PDF */
+    @media print {
+      body { background:#fff !important; }
+      .invoice { padding:8px !important; }
+
+      .brand-name { font-size:24px !important; }
+      .doc-title { font-size:20px !important; }
+      .doc-number { font-size:28px !important; }
+      .client-name { font-size:18px !important; }
+
+      table { margin-top:8px !important; }
+      thead th { font-size:10px !important; padding:5px 4px !important; }
+      tbody td { font-size:10px !important; padding:4px 4px !important; line-height:1.2 !important; }
+
+      .sum .row { font-size:11px !important; padding:3px 0 !important; }
+      .saldo .value { font-size:20px !important; }
+      .total-words, .obs, .closing-phrase { font-size:10px !important; }
+
+      .logo { width:52px !important; height:52px !important; }
+      .logo-img { width:100% !important; height:100% !important; object-fit:cover !important; display:block !important; }
+    }
+
+    @page { size: A4; margin: 8mm; }
   </style>
 </head>
 <body>
@@ -563,42 +579,15 @@
       renderInvoice();
     }
 
-    // PDF con orden/visual correcto
+    // PDF estable: usa la misma página (mantiene orden + logo)
     function exportPdf() {
-      const invoice = document.getElementById("invoiceDoc").outerHTML;
-      const styles = document.querySelector("style").innerHTML;
-
-      const printWindow = window.open("", "_blank", "width=1200,height=900");
-      printWindow.document.write(`
-        <!doctype html>
-        <html lang="es">
-        <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>Factura PDF</title>
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-          <style>
-            ${styles}
-            body { background: #fff !important; margin: 0; }
-            .invoice { border: 0 !important; box-shadow: none !important; }
-            @page { margin: 12mm; }
-          </style>
-        </head>
-        <body>
-          ${invoice}
-          <script>
-            window.onload = function () {
-              window.print();
-              window.onafterprint = function () { window.close(); };
-            };
-          <\/script>
-        </body>
-        </html>
-      `);
-      printWindow.document.close();
+      document.body.classList.add("printing");
+      window.print();
     }
+
+    window.addEventListener("afterprint", () => {
+      document.body.classList.remove("printing");
+    });
 
     function switchTab(id){
       document.querySelectorAll(".tab-btn").forEach(b=> b.classList.toggle("active", b.dataset.tab===id));
@@ -627,7 +616,7 @@
       btn.onclick = ()=> switchTab(btn.dataset.tab);
     });
 
-    // fallback logo
+    // fallback del logo si falla la carga
     const brandLogo = document.getElementById("brandLogo");
     const logoFallback = document.getElementById("logoFallback");
     brandLogo.addEventListener("error", () => {
