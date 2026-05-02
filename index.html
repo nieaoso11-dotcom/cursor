@@ -40,15 +40,14 @@
     .invoice{border:1px solid #e6edf8;border-radius:12px;background:#fff;padding:16px;min-height:720px}
     .top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
     .brand{display:flex;align-items:center;gap:12px}
+
     .logo{
-      width:70px;height:70px;border-radius:14px;overflow:hidden;background:#132743;
-      display:flex;align-items:center;justify-content:center;border:1px solid #1f3556;position:relative;
+      width:70px;height:70px;border-radius:14px;background:#132743;
+      display:flex;align-items:center;justify-content:center;border:1px solid #1f3556;
     }
-    .logo-img{width:100%;height:100%;object-fit:cover;display:block}
-    .logo-fallback{
-      position:absolute;inset:0;display:none;align-items:center;justify-content:center;
-      color:#f4a62a;font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;
-    }
+    .house-logo{color:#f4a62a}
+    .house-svg{width:46px;height:46px;display:block}
+
     .brand-name{margin:0;font-family:Montserrat,sans-serif;font-weight:900;font-size:34px;line-height:1;letter-spacing:.5px}
     .brand-sub{margin:4px 0 0;color:var(--orange);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
     .seller{margin-top:10px;border-left:4px solid var(--orange);padding-left:10px}
@@ -118,21 +117,31 @@
       .bottom{grid-template-columns:1fr}
     }
 
-    /* vista normal durante impresión (oculta panel y tabs) */
     body.printing .tabs, body.printing .panel, body.printing #history{display:none !important}
     body.printing #editor{display:block !important}
     body.printing .layout{grid-template-columns:1fr !important;gap:0 !important}
     body.printing .sheet{border:0 !important;box-shadow:none !important;padding:0 !important}
     body.printing .invoice{border:0 !important;border-radius:0 !important;box-shadow:none !important}
 
-    /* ajustes compactos para PDF */
     @media print {
       body { background:#fff !important; }
       .invoice { padding:8px !important; }
 
+      .top{
+        display:grid !important;
+        grid-template-columns:1fr auto !important;
+        align-items:start !important;
+        gap:10px !important;
+      }
+      .head-right{
+        text-align:right !important;
+        min-width:220px !important;
+        justify-self:end !important;
+      }
+
       .brand-name { font-size:24px !important; }
-      .doc-title { font-size:20px !important; }
-      .doc-number { font-size:28px !important; }
+      .doc-title { font-size:20px !important; line-height:1 !important; }
+      .doc-number { font-size:28px !important; margin-top:6px !important; }
       .client-name { font-size:18px !important; }
 
       table { margin-top:8px !important; }
@@ -144,7 +153,7 @@
       .total-words, .obs, .closing-phrase { font-size:10px !important; }
 
       .logo { width:52px !important; height:52px !important; }
-      .logo-img { width:100% !important; height:100% !important; object-fit:cover !important; display:block !important; }
+      .house-svg { width:34px !important; height:34px !important; }
     }
 
     @page { size: A4; margin: 8mm; }
@@ -221,9 +230,12 @@
             <div class="top">
               <div>
                 <div class="brand">
-                  <div class="logo">
-                    <img id="brandLogo" src="./logo-te-amoblamos.png" alt="Logo te_amoblamos" class="logo-img">
-                    <div id="logoFallback" class="logo-fallback">TA</div>
+                  <div class="logo house-logo" aria-label="Logo te amoblamos">
+                    <svg viewBox="0 0 64 64" class="house-svg" role="img" aria-hidden="true">
+                      <path d="M8 30 L32 10 L56 30" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <rect x="16" y="30" width="32" height="24" rx="2.5" fill="none" stroke="currentColor" stroke-width="4"/>
+                      <rect x="28" y="38" width="8" height="16" fill="none" stroke="currentColor" stroke-width="3"/>
+                    </svg>
                   </div>
                   <div>
                     <h1 class="brand-name">TE AMOBLAMOS</h1>
@@ -579,7 +591,6 @@
       renderInvoice();
     }
 
-    // PDF estable: usa la misma página (mantiene orden + logo)
     function exportPdf() {
       document.body.classList.add("printing");
       window.print();
@@ -614,14 +625,6 @@
 
     document.querySelectorAll(".tab-btn").forEach(btn=>{
       btn.onclick = ()=> switchTab(btn.dataset.tab);
-    });
-
-    // fallback del logo si falla la carga
-    const brandLogo = document.getElementById("brandLogo");
-    const logoFallback = document.getElementById("logoFallback");
-    brandLogo.addEventListener("error", () => {
-      brandLogo.style.display = "none";
-      logoFallback.style.display = "flex";
     });
 
     newInvoice();
