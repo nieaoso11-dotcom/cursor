@@ -6,13 +6,14 @@
     <title>Facturador para Google Sites</title>
     <style>
       :root {
-        --bg: #f5f7fb;
-        --card: #ffffff;
-        --text: #1d2433;
-        --muted: #5a6375;
-        --line: #dbe1ee;
-        --primary: #3f6df6;
-        --danger: #d64545;
+        --bg: #0f2238;
+        --card: #122b46;
+        --text: #f5d082;
+        --muted: #d9bf84;
+        --line: #2b4668;
+        --primary: #f0c36c;
+        --danger: #c05b5b;
+        --ink-dark: #0a1728;
       }
       * { box-sizing: border-box; }
       body {
@@ -33,6 +34,7 @@
         border: 1px solid var(--line);
         border-radius: 12px;
         padding: 18px;
+        box-shadow: 0 10px 25px rgba(5, 10, 20, 0.25);
       }
       h1, h2, h3, p { margin-top: 0; }
       .subtitle { color: var(--muted); }
@@ -50,6 +52,8 @@
         border: 1px solid var(--line);
         border-radius: 8px;
         padding: 10px 12px;
+        background: #f8fbff;
+        color: var(--ink-dark);
       }
       textarea { resize: vertical; }
       .items-header {
@@ -73,8 +77,9 @@
       }
       .btn-primary {
         background: var(--primary);
-        color: #fff;
+        color: var(--ink-dark);
         border-color: var(--primary);
+        font-weight: 700;
       }
       .btn-danger {
         background: var(--danger);
@@ -85,6 +90,34 @@
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+      }
+      .brand-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+        padding: 10px;
+        border: 1px dashed var(--line);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .brand-block img,
+      .preview-logo {
+        width: 86px;
+        height: 86px;
+        object-fit: contain;
+        border-radius: 8px;
+        background: #0a1b2f;
+        border: 1px solid var(--line);
+      }
+      .brand-title {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: 0.5px;
+      }
+      .brand-subtitle {
+        margin: 3px 0 0;
+        color: var(--muted);
       }
       .invoice-header {
         display: flex;
@@ -144,6 +177,13 @@
       <section class="panel panel-form no-print">
         <h1>Generador de facturas</h1>
         <p class="subtitle">Version compatible para insertar en Google Sites.</p>
+        <div class="brand-block">
+          <img id="formBrandLogo" src="./logo-te-amoblamos.png" alt="Logo Te_amoblamos" />
+          <div>
+            <p class="brand-title">Te_amoblamos</p>
+            <p class="brand-subtitle">Personaliza y genera tu factura profesional</p>
+          </div>
+        </div>
         <div class="grid two-cols">
           <label>Tu negocio <input id="businessName" type="text" /></label>
           <label>NIT / RUC / CUIT <input id="businessTaxId" type="text" /></label>
@@ -187,6 +227,7 @@
       <section class="panel panel-preview" id="invoicePreview">
         <header class="invoice-header">
           <div>
+            <img id="previewLogo" class="preview-logo" src="./logo-te-amoblamos.png" alt="Logo Te_amoblamos" />
             <h2 id="previewBusinessName">Tu negocio</h2>
             <p id="previewBusinessAddress">Direccion del negocio</p>
             <p id="previewBusinessTaxId">ID fiscal</p>
@@ -251,6 +292,10 @@
         invoiceNumber: document.getElementById("invoiceNumber"),
         notes: document.getElementById("notes")
       };
+      const logos = {
+        form: document.getElementById("formBrandLogo"),
+        preview: document.getElementById("previewLogo")
+      };
       const preview = {
         businessName: document.getElementById("previewBusinessName"),
         businessTaxId: document.getElementById("previewBusinessTaxId"),
@@ -281,6 +326,11 @@
       function generateInvoiceNumber() {
         const random = Math.floor(Math.random() * 9000) + 1000;
         return "FAC-" + new Date().getFullYear() + "-" + random;
+      }
+      function ensureLogoVisible() {
+        const fallback = "https://via.placeholder.com/200x200/0f2238/f0c36c?text=Te_amoblamos";
+        logos.form.onerror = function () { logos.form.src = fallback; };
+        logos.preview.onerror = function () { logos.preview.src = fallback; };
       }
       function addItemRow(description, quantity, price) {
         const fragment = itemTemplate.content.cloneNode(true);
@@ -361,6 +411,7 @@
         fields.invoiceDate.value = new Date().toISOString().split("T")[0];
         fields.taxRate.value = "0";
         fields.discountRate.value = "0";
+        fields.businessName.value = "Te_amoblamos";
         fields.invoiceNumber.value = generateInvoiceNumber();
         itemsContainer.innerHTML = "";
         addItemRow("", 1, 0);
@@ -374,6 +425,7 @@
       document.addEventListener("input", function (event) {
         if (event.target.closest(".panel-form")) updatePreview();
       });
+      ensureLogoVisible();
       resetForm();
     </script>
   </body>
