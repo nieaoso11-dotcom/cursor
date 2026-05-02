@@ -38,6 +38,8 @@
 
     .sheet{padding:14px}
     .invoice{border:1px solid #e6edf8;border-radius:12px;background:#fff;padding:16px;min-height:720px}
+
+    /* Encabezado: izquierda (marca/contacto), derecha (cuenta cobro/fecha) */
     .top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
     .brand{display:flex;align-items:center;gap:12px}
 
@@ -53,10 +55,12 @@
     .seller{margin-top:10px;border-left:4px solid var(--orange);padding-left:10px}
     .seller strong{display:block;font-size:18px;font-weight:800;margin-bottom:2px}
     .seller span{color:#58719a;font-weight:600;font-size:13px}
+
     .head-right{text-align:right;min-width:220px}
     .doc-title{margin:0;font-family:Montserrat,sans-serif;font-size:28px;line-height:1;font-weight:900}
     .doc-number{margin-top:6px;font-family:Montserrat,sans-serif;font-size:38px;color:var(--orange);font-weight:900}
     .date-pill{margin-top:8px;background:#f3f8ff;border:1px solid #e2ebf8;border-radius:10px;padding:8px 10px;font-size:13px;font-weight:800}
+
     .client{margin-top:14px;border-bottom:1px solid #e7effc;padding-bottom:8px}
     .client small{color:#8aa0bf;font-weight:800;letter-spacing:3px;text-transform:uppercase;font-size:11px}
     .client-name{margin-top:6px;font-size:22px;font-weight:800}
@@ -77,18 +81,38 @@
     .editor-item .meta{color:#5b759d;font-size:11px}
     .editor-empty{font-size:12px;color:#6f86a8}
 
-    .bottom{margin-top:12px;display:grid;grid-template-columns:1fr 250px;gap:12px;align-items:start}
-    .total-words{padding:8px 0;border-top:1px dashed #dce7f8;border-bottom:1px dashed #dce7f8;font-size:13px;font-weight:800}
-    .bank{margin-top:10px;border:1px solid #e2ebfa;border-radius:12px;background:#fbfdff;padding:10px}
-    .bank h5{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:800}
-    .bank-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:11px;color:#5f789e;font-weight:700}
-    .bank-grid strong{display:block;font-size:16px;color:#10243f;margin-top:2px;font-weight:800}
-    .obs{margin-top:10px;font-size:12px;color:#5f789e;font-style:italic;font-weight:600}
+    /* Totales primero en columnas (letras + montos). Banco al final. */
+    .bottom{margin-top:12px;display:grid;gap:12px}
+
+    /* Fila superior: texto + columna financiera */
+    .totals-top{
+      display:grid;
+      grid-template-columns: 1fr 250px;
+      gap:12px;
+      align-items:start;
+    }
+
+    .total-words{
+      padding:8px 0;
+      border-top:1px dashed #dce7f8;
+      border-bottom:1px dashed #dce7f8;
+      font-size:13px;
+      font-weight:800;
+    }
+
     .sum .row{display:flex;justify-content:space-between;font-size:13px;font-weight:800;padding:6px 0}
     .sum .green{color:var(--green)}
     .saldo{margin-top:6px;background:var(--navy);color:#fff;border-radius:12px;padding:10px}
     .saldo small{color:var(--orange);text-transform:uppercase;font-weight:800;font-size:11px}
     .saldo .value{text-align:right;font-size:28px;font-weight:900;margin-top:2px}
+
+    .bank{border:1px solid #e2ebfa;border-radius:12px;background:#fbfdff;padding:10px}
+    .bank h5{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:800}
+    .bank-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:11px;color:#5f789e;font-weight:700}
+    .bank-grid strong{display:block;font-size:16px;color:#10243f;margin-top:2px;font-weight:800}
+
+    .obs{margin-top:10px;font-size:12px;color:#5f789e;font-style:italic;font-weight:600}
+
     .closing-phrase{
       margin-top:14px;padding-top:10px;border-top:1px dashed #dce7f8;text-align:center;
       font-size:12px;font-weight:700;color:#4f688d;letter-spacing:.2px;
@@ -114,7 +138,7 @@
       .panel{position:static}
       .top{grid-template-columns:1fr}
       .head-right{text-align:left}
-      .bottom{grid-template-columns:1fr}
+      .totals-top{grid-template-columns:1fr}
     }
 
     body.printing .tabs, body.printing .panel, body.printing #history{display:none !important}
@@ -124,39 +148,37 @@
     body.printing .invoice{border:0 !important;border-radius:0 !important;box-shadow:none !important}
 
     @media print {
-      body { background:#fff !important; }
-      .invoice { padding:8px !important; }
+      body{background:#fff !important}
+      .invoice{padding:8px !important}
 
+      /* Encabezado en PDF: misma distribución pantalla vs impresión */
       .top{
         display:grid !important;
         grid-template-columns:1fr auto !important;
         align-items:start !important;
         gap:10px !important;
       }
-      .head-right{
-        text-align:right !important;
-        min-width:220px !important;
-        justify-self:end !important;
-      }
+      .head-right{text-align:right !important;justify-self:end !important;min-width:220px !important}
 
-      .brand-name { font-size:24px !important; }
-      .doc-title { font-size:20px !important; line-height:1 !important; }
-      .doc-number { font-size:28px !important; margin-top:6px !important; }
-      .client-name { font-size:18px !important; }
+      /* Items más compactos */
+      .brand-name{font-size:24px !important}
+      .doc-title{font-size:20px !important;line-height:1 !important}
+      .doc-number{font-size:28px !important;margin-top:6px !important}
+      .client-name{font-size:18px !important}
 
-      table { margin-top:8px !important; }
-      thead th { font-size:10px !important; padding:5px 4px !important; }
-      tbody td { font-size:10px !important; padding:4px 4px !important; line-height:1.2 !important; }
+      thead th{font-size:10px !important;padding:5px 4px !important}
+      tbody td{font-size:10px !important;padding:4px 4px !important;line-height:1.2 !important}
 
-      .sum .row { font-size:11px !important; padding:3px 0 !important; }
-      .saldo .value { font-size:20px !important; }
-      .total-words, .obs, .closing-phrase { font-size:10px !important; }
+      .total-words, .bank, .obs, .closing-phrase{font-size:10px !important}
+      .saldo .value{font-size:20px !important}
 
-      .logo { width:52px !important; height:52px !important; }
-      .house-svg { width:34px !important; height:34px !important; }
+      .bank{padding:8px !important}
+
+      .logo{width:52px !important;height:52px !important}
+      .house-svg{width:34px !important;height:34px !important}
     }
 
-    @page { size: A4; margin: 8mm; }
+    @page{size:A4;margin:8mm}
   </style>
 </head>
 <body>
@@ -242,11 +264,13 @@
                     <p class="brand-sub">MOBILIARIO & ESTILO</p>
                   </div>
                 </div>
+
                 <div class="seller">
                   <strong>JHON TEILOR OSORIO ALVAREZ</strong>
                   <span>Teilorosorio@gmail.com | 3115462451</span>
                 </div>
               </div>
+
               <div class="head-right">
                 <h2 class="doc-title">CUENTA DE<br>COBRO</h2>
                 <div class="doc-number">#<span id="vNumber">20514</span></div>
@@ -271,29 +295,30 @@
               <tbody id="itemsBody"></tbody>
             </table>
 
+            <!-- Orden nuevo: TOTAL EN LETRAS + montos primero | banco al final -->
             <div class="bottom">
-              <div>
+              <div class="totals-top">
                 <div class="total-words">TOTAL EN LETRAS: <span id="totalWords">---</span></div>
 
-                <div class="bank">
-                  <h5>Información bancaria</h5>
-                  <div class="bank-grid">
-                    <div>CAJA SOCIAL (AHORROS)<strong>24055109150</strong></div>
-                    <div>CÉDULA TITULAR<strong>103757035</strong></div>
+                <div class="sum">
+                  <div class="row"><span>SUBTOTAL</span><span>$<span id="subTotal">0</span></span></div>
+                  <div class="row green"><span>ABONO</span><span>$<span id="abono">0</span></span></div>
+                  <div class="saldo">
+                    <small>SALDO RESTANTE</small>
+                    <div class="value">$<span id="saldo">0</span></div>
                   </div>
                 </div>
-
-                <div class="obs">OBSERVACIONES: <span id="vNotes">-</span></div>
               </div>
 
-              <div class="sum">
-                <div class="row"><span>SUBTOTAL</span><span>$<span id="subTotal">0</span></span></div>
-                <div class="row green"><span>ABONO</span><span>$<span id="abono">0</span></span></div>
-                <div class="saldo">
-                  <small>SALDO RESTANTE</small>
-                  <div class="value">$<span id="saldo">0</span></div>
+              <div class="bank">
+                <h5>Información bancaria</h5>
+                <div class="bank-grid">
+                  <div>CAJA SOCIAL (AHORROS)<strong>24055109150</strong></div>
+                  <div>CÉDULA TITULAR<strong>103757035</strong></div>
                 </div>
               </div>
+
+              <div class="obs">OBSERVACIONES: <span id="vNotes">-</span></div>
             </div>
 
             <div class="closing-phrase">
