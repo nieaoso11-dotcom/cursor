@@ -129,36 +129,6 @@
       .head-right{text-align:left}
       .totals-top{grid-template-columns:1fr}
     }
-
-    body.printing .tabs, body.printing .panel, body.printing #history{display:none !important}
-    body.printing #editor{display:block !important}
-    body.printing .layout{grid-template-columns:1fr !important;gap:0 !important}
-    body.printing .sheet{border:0 !important;box-shadow:none !important;padding:0 !important}
-    body.printing .invoice{border:0 !important;border-radius:0 !important;box-shadow:none !important}
-
-    @media print {
-      body{background:#fff !important}
-      .invoice{padding:8px !important}
-      .top{
-        display:grid !important;
-        grid-template-columns:1fr auto !important;
-        align-items:start !important;
-        gap:10px !important;
-      }
-      .head-right{text-align:right !important;justify-self:end !important;min-width:220px !important}
-      .brand-name{font-size:24px !important}
-      .doc-title{font-size:20px !important;line-height:1 !important}
-      .doc-number{font-size:28px !important;margin-top:6px !important}
-      .client-name{font-size:18px !important}
-      thead th{font-size:10px !important;padding:5px 4px !important}
-      tbody td{font-size:10px !important;padding:4px 4px !important;line-height:1.2 !important}
-      .total-words, .bank, .obs, .closing-phrase{font-size:10px !important}
-      .saldo .value{font-size:20px !important}
-      .bank{padding:8px !important}
-      .logo{width:52px !important;height:52px !important}
-      .house-svg{width:34px !important;height:34px !important}
-    }
-    @page{size:A4;margin:8mm}
   </style>
 </head>
 <body>
@@ -509,7 +479,6 @@
       };
     }
 
-    /** Guarda factura actual. Devuelve true/false. */
     function persistCurrentInvoice() {
       const client = dom.clientName.value.trim();
       if (!client) { alert("Escribe el cliente."); return false; }
@@ -532,15 +501,102 @@
       alert("Factura guardada.");
     };
 
+    /** CSS embebido para ventana de impresión (móvil + nombre archivo por <title>) */
+    function invoicePrintCss() {
+      return `
+        :root{ --text:#10243f; --navy:#132743; --orange:#f4a62a; --green:#06a247; }
+        body{margin:0;background:#fff;color:var(--text);font-family:Inter,system-ui,Arial,sans-serif}
+        .invoice{border:0;border-radius:0;padding:10px}
+
+        .top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
+        .brand{display:flex;align-items:center;gap:12px}
+        .logo{width:52px;height:52px;border-radius:14px;background:#132743;display:flex;align-items:center;justify-content:center;border:1px solid #1f3556}
+        .house-logo{color:#f4a62a}
+        .house-svg{width:34px;height:34px;display:block}
+        .brand-name{margin:0;font-family:Montserrat,sans-serif;font-weight:900;font-size:24px;line-height:1;letter-spacing:.5px}
+        .brand-sub{margin:4px 0 0;color:var(--orange);font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+        .seller{margin-top:8px;border-left:4px solid var(--orange);padding-left:10px}
+        .seller strong{display:block;font-size:14px;font-weight:800;margin-bottom:2px}
+        .seller span{color:#58719a;font-weight:600;font-size:12px}
+
+        .head-right{text-align:right;min-width:220px;justify-self:end}
+        .doc-title{margin:0;font-family:Montserrat,sans-serif;font-size:20px;line-height:1;font-weight:900}
+        .doc-number{margin-top:6px;font-family:Montserrat,sans-serif;font-size:28px;color:var(--orange);font-weight:900}
+        .date-pill{margin-top:8px;background:#f3f8ff;border:1px solid #e2ebf8;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:800}
+
+        .client{margin-top:12px;border-bottom:1px solid #e7effc;padding-bottom:8px}
+        .client small{color:#8aa0bf;font-weight:800;letter-spacing:3px;text-transform:uppercase;font-size:10px}
+        .client-name{margin-top:6px;font-size:18px;font-weight:800}
+
+        table{width:100%;border-collapse:collapse;margin-top:10px}
+        thead th{border:1px solid #2c415f;background:#f3f8ff;font-size:10px;font-weight:800;text-transform:uppercase;padding:5px 4px}
+        tbody td{border:1px solid #dce6f5;padding:4px 4px;font-size:10px;text-align:center;line-height:1.2}
+        td.desc{text-align:left}
+
+        .bottom{margin-top:10px;display:grid;gap:10px}
+        .totals-top{display:grid;grid-template-columns:1fr 230px;gap:10px;align-items:start}
+        .total-words{padding:6px 0;border-top:1px dashed #dce7f8;border-bottom:1px dashed #dce7f8;font-size:10px;font-weight:800}
+        .sum .row{display:flex;justify-content:space-between;font-size:11px;font-weight:800;padding:3px 0}
+        .sum .green{color:var(--green)}
+        .saldo{margin-top:6px;background:var(--navy);color:#fff;border-radius:12px;padding:10px}
+        .saldo small{color:var(--orange);text-transform:uppercase;font-weight:800;font-size:10px}
+        .saldo .value{text-align:right;font-size:20px;font-weight:900;margin-top:2px}
+
+        .bank{border:1px solid #e2ebfa;border-radius:12px;background:#fbfdff;padding:8px}
+        .bank h5{margin:0 0 6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:800}
+        .bank-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;font-size:10px;color:#5f789e;font-weight:700}
+        .bank-grid strong{display:block;font-size:14px;color:#10243f;margin-top:2px;font-weight:800}
+
+        .obs{margin-top:8px;font-size:10px;color:#5f789e;font-style:italic;font-weight:600}
+        .closing-phrase{margin-top:10px;padding-top:8px;border-top:1px dashed #dce7f8;text-align:center;font-size:10px;font-weight:700;color:#4f688d}
+
+        @page{size:A4;margin:8mm}
+      `;
+    }
+
+    function openInvoicePrintWindow() {
+      const invoiceEl = document.getElementById("invoiceDoc");
+      if (!invoiceEl) return;
+
+      const num = (document.getElementById("invoiceNumber").value || "").trim() || "sin-numero";
+      const w = window.open("", "_blank");
+      if (!w) {
+        alert("Tu navegador bloqueó la ventana emergente. Activa ventanas emergentes para poder imprimir solo la factura.");
+        return;
+      }
+
+      w.document.open();
+      w.document.write(`
+        <!doctype html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Factura-${num}</title>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
+          <style>${invoicePrintCss()}</style>
+        </head>
+        <body>
+          ${invoiceEl.outerHTML}
+          <script>
+            window.addEventListener("load", function () {
+              window.focus();
+              window.print();
+              window.addEventListener("afterprint", function () { window.close(); }, { once: true });
+            });
+          <\/script>
+        </body>
+        </html>
+      `);
+      w.document.close();
+    }
+
     dom.pdfInvoice.onclick = () => {
       if (!persistCurrentInvoice()) return;
-      document.body.classList.add("printing");
-      window.print();
+      openInvoicePrintWindow();
     };
-
-    window.addEventListener("afterprint", () => {
-      document.body.classList.remove("printing");
-    });
 
     function loadInvoice(inv){
       dom.invoiceDate.value = inv.date || "";
