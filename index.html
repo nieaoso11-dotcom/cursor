@@ -39,23 +39,19 @@
     .sheet{padding:14px}
     .invoice{border:1px solid #e6edf8;border-radius:12px;background:#fff;padding:16px;min-height:720px}
 
-    /* Encabezado: izquierda (marca/contacto), derecha (cuenta cobro/fecha) */
     .top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
     .brand{display:flex;align-items:center;gap:12px}
-
     .logo{
       width:70px;height:70px;border-radius:14px;background:#132743;
       display:flex;align-items:center;justify-content:center;border:1px solid #1f3556;
     }
     .house-logo{color:#f4a62a}
     .house-svg{width:46px;height:46px;display:block}
-
     .brand-name{margin:0;font-family:Montserrat,sans-serif;font-weight:900;font-size:34px;line-height:1;letter-spacing:.5px}
     .brand-sub{margin:4px 0 0;color:var(--orange);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
     .seller{margin-top:10px;border-left:4px solid var(--orange);padding-left:10px}
     .seller strong{display:block;font-size:18px;font-weight:800;margin-bottom:2px}
     .seller span{color:#58719a;font-weight:600;font-size:13px}
-
     .head-right{text-align:right;min-width:220px}
     .doc-title{margin:0;font-family:Montserrat,sans-serif;font-size:28px;line-height:1;font-weight:900}
     .doc-number{margin-top:6px;font-family:Montserrat,sans-serif;font-size:38px;color:var(--orange);font-weight:900}
@@ -81,38 +77,22 @@
     .editor-item .meta{color:#5b759d;font-size:11px}
     .editor-empty{font-size:12px;color:#6f86a8}
 
-    /* Totales primero en columnas (letras + montos). Banco al final. */
     .bottom{margin-top:12px;display:grid;gap:12px}
-
-    /* Fila superior: texto + columna financiera */
-    .totals-top{
-      display:grid;
-      grid-template-columns: 1fr 250px;
-      gap:12px;
-      align-items:start;
-    }
-
+    .totals-top{display:grid;grid-template-columns:1fr 250px;gap:12px;align-items:start}
     .total-words{
-      padding:8px 0;
-      border-top:1px dashed #dce7f8;
-      border-bottom:1px dashed #dce7f8;
-      font-size:13px;
-      font-weight:800;
+      padding:8px 0;border-top:1px dashed #dce7f8;border-bottom:1px dashed #dce7f8;
+      font-size:13px;font-weight:800;
     }
-
     .sum .row{display:flex;justify-content:space-between;font-size:13px;font-weight:800;padding:6px 0}
     .sum .green{color:var(--green)}
     .saldo{margin-top:6px;background:var(--navy);color:#fff;border-radius:12px;padding:10px}
     .saldo small{color:var(--orange);text-transform:uppercase;font-weight:800;font-size:11px}
     .saldo .value{text-align:right;font-size:28px;font-weight:900;margin-top:2px}
-
     .bank{border:1px solid #e2ebfa;border-radius:12px;background:#fbfdff;padding:10px}
     .bank h5{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:800}
     .bank-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:11px;color:#5f789e;font-weight:700}
     .bank-grid strong{display:block;font-size:16px;color:#10243f;margin-top:2px;font-weight:800}
-
     .obs{margin-top:10px;font-size:12px;color:#5f789e;font-style:italic;font-weight:600}
-
     .closing-phrase{
       margin-top:14px;padding-top:10px;border-top:1px dashed #dce7f8;text-align:center;
       font-size:12px;font-weight:700;color:#4f688d;letter-spacing:.2px;
@@ -150,8 +130,6 @@
     @media print {
       body{background:#fff !important}
       .invoice{padding:8px !important}
-
-      /* Encabezado en PDF: misma distribución pantalla vs impresión */
       .top{
         display:grid !important;
         grid-template-columns:1fr auto !important;
@@ -159,25 +137,18 @@
         gap:10px !important;
       }
       .head-right{text-align:right !important;justify-self:end !important;min-width:220px !important}
-
-      /* Items más compactos */
       .brand-name{font-size:24px !important}
       .doc-title{font-size:20px !important;line-height:1 !important}
       .doc-number{font-size:28px !important;margin-top:6px !important}
       .client-name{font-size:18px !important}
-
       thead th{font-size:10px !important;padding:5px 4px !important}
       tbody td{font-size:10px !important;padding:4px 4px !important;line-height:1.2 !important}
-
       .total-words, .bank, .obs, .closing-phrase{font-size:10px !important}
       .saldo .value{font-size:20px !important}
-
       .bank{padding:8px !important}
-
       .logo{width:52px !important;height:52px !important}
       .house-svg{width:34px !important;height:34px !important}
     }
-
     @page{size:A4;margin:8mm}
   </style>
 </head>
@@ -206,7 +177,10 @@
               <label>Fecha <input id="invoiceDate" type="date"></label>
               <label>Número <input id="invoiceNumber" readonly></label>
             </div>
-            <label>Cliente <input id="clientName" placeholder="Nombre del cliente"></label>
+            <label>Cliente
+              <input id="clientName" list="clientList" placeholder="Escribe o elige un cliente" autocomplete="off">
+            </label>
+            <datalist id="clientList"></datalist>
           </div>
 
           <div class="sec">
@@ -264,13 +238,11 @@
                     <p class="brand-sub">MOBILIARIO & ESTILO</p>
                   </div>
                 </div>
-
                 <div class="seller">
                   <strong>JHON TEILOR OSORIO ALVAREZ</strong>
                   <span>Teilorosorio@gmail.com | 3115462451</span>
                 </div>
               </div>
-
               <div class="head-right">
                 <h2 class="doc-title">CUENTA DE<br>COBRO</h2>
                 <div class="doc-number">#<span id="vNumber">20514</span></div>
@@ -295,11 +267,9 @@
               <tbody id="itemsBody"></tbody>
             </table>
 
-            <!-- Orden nuevo: TOTAL EN LETRAS + montos primero | banco al final -->
             <div class="bottom">
               <div class="totals-top">
                 <div class="total-words">TOTAL EN LETRAS: <span id="totalWords">---</span></div>
-
                 <div class="sum">
                   <div class="row"><span>SUBTOTAL</span><span>$<span id="subTotal">0</span></span></div>
                   <div class="row green"><span>ABONO</span><span>$<span id="abono">0</span></span></div>
@@ -322,7 +292,7 @@
             </div>
 
             <div class="closing-phrase">
-              En te amoblamos, solo expertos en confort y comodidad.
+              En Te Amoblamos somos expertos en confort y calidad para tu hogar
             </div>
           </article>
         </section>
@@ -344,6 +314,7 @@
     const STORAGE_KEY = "te_amoblamos_historial_v4";
     const INVOICE_COUNTER_KEY = "te_amoblamos_invoice_counter_v1";
     const INVOICE_START = 20514;
+    const CLIENTS_KEY = "te_amoblamos_clientes_v1";
     const items = [];
 
     const $ = (id) => document.getElementById(id);
@@ -373,6 +344,41 @@
       saldo: $("saldo"),
       historyFolders: $("historyFolders")
     };
+
+    function loadClients() {
+      try {
+        return JSON.parse(localStorage.getItem(CLIENTS_KEY) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveClients(list) {
+      localStorage.setItem(CLIENTS_KEY, JSON.stringify(list));
+    }
+
+    function rememberClient(name) {
+      const n = (name || "").trim();
+      if (!n) return;
+      const list = loadClients();
+      if (!list.some((x) => x.toLowerCase() === n.toLowerCase())) {
+        list.push(n);
+        list.sort((a, b) => a.localeCompare(b, "es"));
+        saveClients(list);
+      }
+      renderClientDatalist();
+    }
+
+    function renderClientDatalist() {
+      const dl = document.getElementById("clientList");
+      if (!dl) return;
+      dl.innerHTML = "";
+      loadClients().forEach((name) => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        dl.appendChild(opt);
+      });
+    }
 
     function getCurrentCounter() {
       const saved = Number(localStorage.getItem(INVOICE_COUNTER_KEY));
@@ -417,7 +423,6 @@
         dom.editorItemsList.innerHTML = `<div class="editor-empty">No hay ítems cargados.</div>`;
         return;
       }
-
       items.forEach((it, idx) => {
         const row = document.createElement("div");
         row.className = "editor-item";
@@ -459,14 +464,12 @@
       const sub = subtotal();
       const ab = getAbonoCapped(sub);
       const sa = sub - ab;
-
       if ((Number(dom.abonoInput.value) || 0) !== ab) dom.abonoInput.value = String(ab);
 
       dom.subTotal.textContent = money(sub);
       dom.abono.textContent = money(ab);
       dom.saldo.textContent = money(sa);
       dom.totalWords.textContent = toWordsES(sa);
-
       renderEditorItems();
     }
 
@@ -510,6 +513,7 @@
       const all = readStorage();
       all.push(inv);
       writeStorage(all);
+      rememberClient(client);
       renderHistory();
       alert("Factura guardada.");
     }
@@ -520,10 +524,8 @@
       dom.clientName.value = inv.client || "";
       dom.notes.value = inv.notes || "";
       dom.abonoInput.value = String(inv.abono || 0);
-
       items.length = 0;
       (inv.items || []).forEach(i=>items.push({desc:i.desc, qty:Number(i.qty), unit:Number(i.unit)}));
-
       renderInvoice();
       switchTab("editor");
     }
@@ -541,7 +543,6 @@
         dom.historyFolders.innerHTML = `<p class="muted">Aún no tienes facturas guardadas.</p>`;
         return;
       }
-
       const grouped = {};
       all.forEach(inv=>{
         const key = inv.client?.trim() || "Sin cliente";
@@ -552,12 +553,10 @@
       Object.keys(grouped).sort().forEach(client=>{
         const folder = document.createElement("div");
         folder.className = "folder";
-
         const head = document.createElement("div");
         head.className = "folder-head";
         head.innerHTML = `<div class="folder-title">📁 ${client}</div><div class="folder-count">${grouped[client].length} factura(s)</div>`;
         head.onclick = ()=> folder.classList.toggle("open");
-
         const body = document.createElement("div");
         body.className = "folder-body";
 
@@ -572,17 +571,14 @@
             `;
             const actions = document.createElement("div");
             actions.className = "inv-actions";
-
             const b1 = document.createElement("button");
             b1.textContent = "Cargar";
             b1.style.background = "#2c5fa9";
             b1.onclick = ()=> loadInvoice(inv);
-
             const b2 = document.createElement("button");
             b2.textContent = "Eliminar";
             b2.style.background = "var(--danger)";
             b2.onclick = ()=> deleteInvoice(inv.id);
-
             actions.appendChild(b1);
             actions.appendChild(b2);
             card.appendChild(actions);
@@ -602,7 +598,6 @@
       if(!desc) return alert("Escribe la descripción.");
       if(!(qty>0)) return alert("Cantidad inválida.");
       if(!(unit>=0)) return alert("Valor inválido.");
-
       items.push({desc, qty, unit});
       dom.itemDesc.value = "";
       dom.itemQty.value = 1;
@@ -652,6 +647,7 @@
       btn.onclick = ()=> switchTab(btn.dataset.tab);
     });
 
+    renderClientDatalist();
     newInvoice();
     renderHistory();
   </script>
