@@ -106,6 +106,15 @@
     .folder-count{color:var(--muted);font-size:12px;font-weight:700}
     .folder-body{display:none;padding:10px 12px}
     .folder.open .folder-body{display:block}
+
+    .month-block{margin-bottom:10px;border:1px solid #e2ebfa;border-radius:10px;overflow:hidden;background:#fbfdff}
+    .month-head{
+      padding:8px 10px;font-weight:800;font-size:12px;color:#334155;background:#eef4ff;
+      display:flex;justify-content:space-between;align-items:center;cursor:pointer
+    }
+    .month-body{display:none;padding:8px 10px;background:#fff}
+    .month-block.open .month-body{display:block}
+
     .inv-card{border:1px solid #e6edf8;border-radius:10px;padding:8px;margin-bottom:8px}
     .inv-card strong{font-size:13px}
     .inv-meta{font-size:12px;color:#59739a;margin:4px 0 6px}
@@ -216,7 +225,7 @@
           <div class="btns">
             <button id="saveInvoice">Guardar factura</button>
             <button id="newInvoice">Nueva factura</button>
-            <button id="pdfInvoice" class="btn-orange">Descargar PDF (con diseño)</button>
+            <button id="pdfInvoice" class="btn-orange">Guardar y descargar PDF</button>
             <button id="clearItems" class="btn-danger">Vaciar ítems</button>
           </div>
         </aside>
@@ -346,16 +355,10 @@
     };
 
     function loadClients() {
-      try {
-        return JSON.parse(localStorage.getItem(CLIENTS_KEY) || "[]");
-      } catch {
-        return [];
-      }
+      try { return JSON.parse(localStorage.getItem(CLIENTS_KEY) || "[]"); }
+      catch { return []; }
     }
-
-    function saveClients(list) {
-      localStorage.setItem(CLIENTS_KEY, JSON.stringify(list));
-    }
+    function saveClients(list) { localStorage.setItem(CLIENTS_KEY, JSON.stringify(list)); }
 
     function rememberClient(name) {
       const n = (name || "").trim();
@@ -385,7 +388,6 @@
       if (Number.isFinite(saved) && saved >= INVOICE_START) return saved;
       return INVOICE_START;
     }
-
     function reserveNextInvoiceNumber() {
       const current = getCurrentCounter();
       localStorage.setItem(INVOICE_COUNTER_KEY, String(current + 1));
@@ -489,16 +491,12 @@
     function readStorage(){ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
     function writeStorage(v){ localStorage.setItem(STORAGE_KEY, JSON.stringify(v)); }
 
-    function saveInvoice(){
+    function buildCurrentInvoice() {
       const client = dom.clientName.value.trim();
-      if(!client) return alert("Escribe el cliente.");
-      if(!items.length) return alert("Agrega al menos un item.");
-
       const sub = subtotal();
       const ab = getAbonoCapped(sub);
       const sa = sub - ab;
-
-      const inv = {
+      return {
         id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
         number: dom.invoiceNumber.value.trim() || String(INVOICE_START),
         date: dom.invoiceDate.value,
@@ -509,14 +507,40 @@
         subtotal: sub,
         saldo: sa
       };
+    }
 
+    /** Guarda factura actual. Devuelve true/false. */
+    function persistCurrentInvoice() {
+      const client = dom.clientName.value.trim();
+      if (!client) { alert("Escribe el cliente."); return false; }
+      if (!items.length) { alert("Agrega al menos un item."); return false; }
+
+      const inv = buildCurrentInvoice();
       const all = readStorage();
-      all.push(inv);
+      const idx = all.findIndex((x) => x.number === inv.number);
+      if (idx >= 0) all[idx] = inv;
+      else all.push(inv);
+
       writeStorage(all);
       rememberClient(client);
       renderHistory();
-      alert("Factura guardada.");
+      return true;
     }
+
+    dom.saveInvoice.onclick = () => {
+      if (!persistCurrentInvoice()) return;
+      alert("Factura guardada.");
+    };
+
+    dom.pdfInvoice.onclick = () => {
+      if (!persistCurrentInvoice()) return;
+      document.body.classList.add("printing");
+      window.print();
+    };
+
+    window.addEventListener("afterprint", () => {
+      document.body.classList.remove("printing");
+    });
 
     function loadInvoice(inv){
       dom.invoiceDate.value = inv.date || "";
@@ -536,6 +560,19 @@
       renderHistory();
     }
 
+    function monthKeyFromInvoice(inv) {
+      const d = inv.date;
+      if (!d || d.length < 7) return "0000-00";
+      return d.slice(0, 7);
+    }
+
+    function monthLabelEs(ym) {
+      if (ym === "0000-00") return "Sin fecha";
+      const [y, m] = ym.split("-").map(Number);
+      const dt = new Date(y, m - 1, 1);
+      return new Intl.DateTimeFormat("es-CO", { month: "long", year: "numeric" }).format(dt);
+    }
+
     function renderHistory(){
       const all = readStorage();
       dom.historyFolders.innerHTML = "";
@@ -543,6 +580,7 @@
         dom.historyFolders.innerHTML = `<p class="muted">Aún no tienes facturas guardadas.</p>`;
         return;
       }
+
       const grouped = {};
       all.forEach(inv=>{
         const key = inv.client?.trim() || "Sin cliente";
@@ -553,16 +591,43 @@
       Object.keys(grouped).sort().forEach(client=>{
         const folder = document.createElement("div");
         folder.className = "folder";
+
         const head = document.createElement("div");
         head.className = "folder-head";
         head.innerHTML = `<div class="folder-title">📁 ${client}</div><div class="folder-count">${grouped[client].length} factura(s)</div>`;
         head.onclick = ()=> folder.classList.toggle("open");
+
         const body = document.createElement("div");
         body.className = "folder-body";
 
-        grouped[client]
-          .sort((a,b)=>(b.date||"").localeCompare(a.date||""))
-          .forEach(inv=>{
+        const byMonth = {};
+        grouped[client].forEach((inv) => {
+          const mk = monthKeyFromInvoice(inv);
+          if (!byMonth[mk]) byMonth[mk] = [];
+          byMonth[mk].push(inv);
+        });
+
+        const monthKeys = Object.keys(byMonth).sort((a, b) => b.localeCompare(a));
+
+        monthKeys.forEach((mk) => {
+          const monthBlock = document.createElement("div");
+          monthBlock.className = "month-block";
+
+          const list = byMonth[mk];
+          list.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+          const mh = document.createElement("div");
+          mh.className = "month-head";
+          mh.innerHTML = `<span>${monthLabelEs(mk)}</span><span>${list.length} fact.</span>`;
+          mh.onclick = (e) => {
+            e.stopPropagation();
+            monthBlock.classList.toggle("open");
+          };
+
+          const mb = document.createElement("div");
+          mb.className = "month-body";
+
+          list.forEach((inv) => {
             const card = document.createElement("div");
             card.className = "inv-card";
             card.innerHTML = `
@@ -582,8 +647,13 @@
             actions.appendChild(b1);
             actions.appendChild(b2);
             card.appendChild(actions);
-            body.appendChild(card);
+            mb.appendChild(card);
           });
+
+          monthBlock.appendChild(mh);
+          monthBlock.appendChild(mb);
+          body.appendChild(monthBlock);
+        });
 
         folder.appendChild(head);
         folder.appendChild(body);
@@ -611,15 +681,6 @@
       renderInvoice();
     }
 
-    function exportPdf() {
-      document.body.classList.add("printing");
-      window.print();
-    }
-
-    window.addEventListener("afterprint", () => {
-      document.body.classList.remove("printing");
-    });
-
     function switchTab(id){
       document.querySelectorAll(".tab-btn").forEach(b=> b.classList.toggle("active", b.dataset.tab===id));
       document.querySelectorAll(".tab").forEach(t=> t.classList.toggle("active", t.id===id));
@@ -628,9 +689,7 @@
 
     dom.addItem.onclick = addItem;
     dom.clearItems.onclick = clearItems;
-    dom.saveInvoice.onclick = saveInvoice;
     dom.newInvoice.onclick = newInvoice;
-    dom.pdfInvoice.onclick = exportPdf;
 
     dom.editorItemsList.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-remove-idx]");
